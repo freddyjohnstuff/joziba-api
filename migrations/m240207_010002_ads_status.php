@@ -3,46 +3,36 @@
 use yii\db\Migration;
 
 /**
- * Class m240204_125757_clients
+ * Class m240207_010002_ads_status
  */
-class m240204_125757_clients extends Migration
+class m240207_010002_ads_status extends Migration
 {
     public function safeUp()
     {
-
         $tableOptions = null;
         if ($this->db->driverName === 'mysql') {
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB';
         }
-
         $this->createTable(
-            '{{%clients}}',
+            '{{%ads_status}}',
             [
                 'id' => $this->integer()->notNull()->append('AUTO_INCREMENT PRIMARY KEY'),
-                'email' => $this->string(100)->notNull(),
-                'phone' => $this->string(100)->notNull(),
-                'password' => $this->string(100)->notNull(),
-                'access_token' => $this->string()->null(),
-                'renew_token' => $this->string()->null(),
+                'name' => $this->string()->notNull()
             ],
             $tableOptions
         );
-
-        /*$this->alterColumn('{{%clients}}','id', 'INT(11) UNSIGNED NOT NULL FIRST AUTO_INCREMENT PRIMARY KEY');*/
 
     }
 
     public function safeDown()
     {
         try {
-            $this->dropTable('{{%clients}}');
+            $this->dropTable('{{%ads_status}}');
             return true;
         } catch (\yii\db\Exception $e) {
-            echo "m240204_125757_clients cannot be reverted.\n";
+            echo "ads_status cannot be reverted.\n";
             print( $e->getMessage() );
             return false;
         }
-
     }
-
 }

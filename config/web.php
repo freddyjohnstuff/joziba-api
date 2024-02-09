@@ -2,6 +2,7 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$urls = require __DIR__ . '/urls.php';
 
 $config = [
     'id' => 'basic',
@@ -45,16 +46,12 @@ $config = [
             ],
         ],
         'db' => $db,
-
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'enableStrictParsing' => true,
-            'showScriptName' => false,
-            'rules' => [
-                ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
-            ],
-        ],
-
+        'urlManager' => $urls,
+    ],
+    'modules' => [
+        'v1' => [
+            'class' => app\modules\v1\Module::class,
+        ]
     ],
     'params' => $params,
 ];
