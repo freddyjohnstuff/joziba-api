@@ -1,16 +1,17 @@
 <?php
 
-namespace app\modules\v1\controllers;
+namespace app\modules\v1\components\controller;
 
+use OpenApi\Annotations as OA;
 use Yii;
-use app\api\modules\v1\traits\ControllerActionsDefault;
+use app\modules\v1\traits\ControllerActionsDefault;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\ActiveController;
 
 /**
- * @OA\Info(
+ * @OA\WInfo(
+ *     title="Joziba backend api"
  *     version="1.0",
- *     title="Groscloud backend api"
  * )
  */
 /**
@@ -33,6 +34,7 @@ class BaseActiveController extends ActiveController
     public function behaviors()
     {
         $behaviors = parent::behaviors();
+        return $behaviors;
         $behaviors['authenticator']['authMethods'] = [
             HttpBearerAuth::class
         ];

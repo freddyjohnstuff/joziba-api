@@ -1,5 +1,5 @@
 <?php
-namespace app\api\modules\v1\components\auth\google;
+namespace app\modules\v1\components\auth\google;
 
 use Curl\Curl;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\api\modules\v1\constants;
+namespace app\modules\v1\constants;
 
 class Api
 {

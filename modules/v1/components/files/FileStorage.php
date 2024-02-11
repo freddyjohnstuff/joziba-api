@@ -1,5 +1,5 @@
 <?php
-namespace app\api\modules\v1\components\files;
+namespace app\modules\v1\components\files;
 
 use app\models\Files;
 use PHPUnit\Framework\Constraint\FileExists;

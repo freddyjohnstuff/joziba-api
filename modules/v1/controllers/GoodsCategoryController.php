@@ -5,23 +5,25 @@ namespace app\modules\v1\controllers;
 use app\models\Ads;
 use app\models\AdsStatus;
 use app\models\GoodsCategory;
+use app\modules\v1\components\controller\BaseActiveController;
+use OpenApi\Annotations as OA;
 use yii\filters\AccessControl;
 use yii\rest\ActiveController;
 
 /**
- * CampaignsController implements the CRUD actions for Partners model.
+ * GoodsCategoryController implements the CRUD actions for Good Category model.
  */
 /**
- * @OA\Tag(name="partners",description="CRUD actions for Partners"),
+ * @OA\Tag(name="goods-category",description="CRUD actions for Goods-category"),
  */
 /**
  * @OA\Get(
- *     path="/api/v1/partners",
- *     tags={"partners"},
- *     summary="Get partners",
+ *     path="/api/v1/goods-category",
+ *     tags={"goods-category"},
+ *     summary="Get goods-category",
  *     security={{ "bearerAuth":{} }},
  *     @OA\Parameter(
- *         description="parametr id",
+ *         description="goods-category id",
  *         in="query",
  *         name="id",
  *         required=false,
@@ -29,39 +31,31 @@ use yii\rest\ActiveController;
  *         @OA\Examples(example="int", value="1", summary="An int value."),
  *     ),
  *                  @OA\Parameter(
- *                     name="name",
- *                     in="query",
- *                     @OA\Schema(type="string"),
- *                 ),
- *                 @OA\Parameter(
- *                     name="partner_key",
- *                     in="query",
- *                     @OA\Schema(type="string"),
- *                 ),
- *                 @OA\Parameter(
- *                     name="type",
- *                     in="query",
- *                     @OA\Schema(type="string"),
- *                 ),
- *                  @OA\Parameter(
- *                     name="site",
- *                     in="query",
- *                     description="internet site",
- *                     @OA\Schema(type="string"),
- *                 ),
- *                @OA\Parameter(
- *                     name="status",
+ *                     name="parent_id",
  *                     in="query",
  *                     @OA\Schema(type="integer"),
- *                  @OA\Examples(example="true", value="1", summary="true"),
- *                  @OA\Examples(example="false", value="0", summary="false"),
+ *                 ),
+ *                 @OA\Parameter(
+ *                     name="fld_key",
+ *                     in="query",
+ *                     @OA\Schema(type="string"),
+ *                 ),
+ *                 @OA\Parameter(
+ *                     name="fld_label",
+ *                     in="query",
+ *                     @OA\Schema(type="string"),
+ *                 ),
+ *                 @OA\Parameter(
+ *                     name="fld_order",
+ *                     in="query",
+ *                     @OA\Schema(type="integer"),
  *                 ),
  *                   @OA\Parameter(
  *                     name="sort",
  *                     in="query",
  *                     description="sort",
- *                       @OA\Examples(example="sorting1", value="-name,id", summary="name DESC,id ASC"),
- *                       @OA\Examples(example="sorting2", value="-id, name", summary="id DESC,name ASC"),
+ *                       @OA\Examples(example="sorting1", value="fld_key,fld_label", summary="fld_key ASC, fld_label ASC"),
+ *                       @OA\Examples(example="sorting2", value="-fld_key,-fld_label", summary="fld_key DESC, fld_label DESC"),
  *                     @OA\Schema(type="string"),
  *                 ),
  *
@@ -74,73 +68,35 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Post(
- *     path="/api/v1/partners",
- *     tags={"partners"},
- *     summary="Adds a new partners",
+ *     path="/api/v1/goods-category",
+ *     tags={"goods-category"},
+ *     summary="Adds a new goods-category",
  *     security={{ "bearerAuth":{} }},
  *     @OA\RequestBody(
  *         @OA\MediaType(
  *             mediaType="application/json",
  *             @OA\Schema(
  *                 @OA\Property(
- *                     property="name",
+ *                     property="parent_id",
+ *                     type="integer"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="fld_key",
  *                     type="string"
  *                 ),
  *                 @OA\Property(
- *                     property="partner_key",
+ *                     property="fld_label",
  *                     type="string"
  *                 ),
  *                 @OA\Property(
- *                     property="status",
- *                     type="boolean"
- *                 ),
- *                 @OA\Property(
- *                     property="type",
- *                     type="string"
- *                 ),
- *                 @OA\Property(
- *                     property="company_name",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="address",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="postcode",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="country",
- *                     description="id страны из справочника стран",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="city",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="site",
- *                     description="internet site",
- *                     type="string",
- *                 ),
- *                  @OA\Property(
- *                     property="tax_number",
+ *                     property="fld_order",
  *                     type="string"
  *                 ),
  *                 example={
- *                   "name": "Partner name",
- *                   "partner_key": "PartnerKey",
- *                   "status": "1",
- *                   "type": "buying",
- *                   "company_name": "P1 Company Name",
- *                   "address": "Petrova st.",
- *                   "postcode": "666666",
- *                   "country": "11",
- *                   "city": "Praha",
- *                   "site": "http://p1site.com",
- *                   "tax_number": "666999888555222",
- *
+ *                   "parent_id": 0,
+ *                   "fld_key": "cars",
+ *                   "fld_label": "Cars and trucks",
+ *                   "fld_order": "1"
  *                  }
  *             )
  *         )
@@ -154,9 +110,9 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Put(
- *     path="/api/v1/partners/{id}",
- *     tags={"partners"},
- *     summary="Edit partners",
+ *     path="/api/v1/goods-category/{id}",
+ *     tags={"goods-category"},
+ *     summary="Edit goods-category",
  *     security={{ "bearerAuth":{} }},
  *      @OA\Parameter(
  *                     name="id",
@@ -169,53 +125,23 @@ use yii\rest\ActiveController;
  *             mediaType="application/json",
  *             @OA\Schema(
  *                 @OA\Property(
- *                     property="name",
+ *                     property="parent_id",
+ *                     type="integer"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="fld_key",
  *                     type="string"
  *                 ),
  *                 @OA\Property(
- *                     property="partner_key",
+ *                     property="fld_label",
  *                     type="string"
  *                 ),
  *                 @OA\Property(
- *                     property="status",
- *                     type="boolean"
- *                 ),
- *                 @OA\Property(
- *                     property="type",
- *                     type="string"
- *                 ),
- *                 @OA\Property(
- *                     property="company_name",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="address",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="postcode",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="country",
- *                     description="id страны из справочника стран",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="city",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="site",
- *                     description="internet site",
- *                     type="string",
- *                 ),
- *                  @OA\Property(
- *                     property="tax_number",
+ *                     property="fld_order",
  *                     type="string"
  *                 ),
  *                 example={
- *                   "name": "New name partner",
+ *                   "fld_label": "Cars and trucks",
  *                  }
  *             )
  *         )
@@ -229,9 +155,9 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Patch(
- *     path="/api/v1/partners/{id}",
- *     tags={"partners"},
- *     summary="Update fields partners",
+ *     path="/api/v1/goods-category/{id}",
+ *     tags={"goods-category"},
+ *     summary="Update fields goods-category",
  *     security={{ "bearerAuth":{} }},
  *      @OA\Parameter(
  *                     name="id",
@@ -244,53 +170,23 @@ use yii\rest\ActiveController;
  *             mediaType="application/json",
  *             @OA\Schema(
  *                 @OA\Property(
- *                     property="name",
+ *                     property="parent_id",
+ *                     type="integer"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="fld_key",
  *                     type="string"
  *                 ),
  *                 @OA\Property(
- *                     property="partner_key",
+ *                     property="fld_label",
  *                     type="string"
  *                 ),
  *                 @OA\Property(
- *                     property="status",
- *                     type="boolean"
- *                 ),
- *                 @OA\Property(
- *                     property="type",
- *                     type="string"
- *                 ),
- *                 @OA\Property(
- *                     property="company_name",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="address",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="postcode",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="country",
- *                     description="id страны из справочника стран",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="city",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="site",
- *                     description="internet site",
- *                     type="string",
- *                 ),
- *                  @OA\Property(
- *                     property="tax_number",
+ *                     property="fld_order",
  *                     type="string"
  *                 ),
  *                 example={
- *                   "name": "New name partner",
+ *                   "fld_label": "Cars and trucks",
  *                  }
  *             )
  *         )
@@ -304,9 +200,9 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Delete(
- *     path="/api/v1/partners/{id}",
- *     tags={"partners"},
- *     summary="Delete partners",
+ *     path="/api/v1/goods-category/{id}",
+ *     tags={"goods-category"},
+ *     summary="Delete goods-category",
  *     security={{ "bearerAuth":{} }},
  *     @OA\Parameter(
  *          name="id",

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\api\modules\v1\components\auth\constants;
+namespace app\modules\v1\components\auth\constants;
 
 
 class Permissions

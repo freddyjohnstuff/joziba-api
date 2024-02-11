@@ -1,5 +1,5 @@
 <?php
-namespace app\api\modules\v1\components\auth\rbac\rule;
+namespace app\modules\v1\components\auth\rbac\rule;
 
 use yii\rbac\Rule;
 

@@ -3,6 +3,8 @@
 namespace app\modules\v1\controllers;
 
 use app\models\Ads;
+use app\modules\v1\components\controller\BaseActiveController;
+use OpenApi\Annotations as OA;
 use yii\filters\AccessControl;
 use yii\rest\ActiveController;
 
@@ -24,47 +26,56 @@ use yii\rest\ActiveController;
  *         name="id",
  *         required=false,
  *         @OA\Schema(type="string"),
- *         @OA\Examples(example="int", value="1", summary="An int value."),
+ *         @OA\Examples(example="integer", value="1", summary="An int value."),
  *     ),
  *                  @OA\Parameter(
  *                     name="client_id",
  *                     in="query",
- *                     @OA\Schema(type="int"),
+ *                     @OA\Schema(type="integer"),
  *                 ),
  *                  @OA\Parameter(
- *                     name="name",
+ *                     name="status_id",
  *                     in="query",
- *                     @OA\Schema(type="string"),
+ *                     @OA\Schema(type="integer"),
  *                 ),
  *                 @OA\Parameter(
- *                     name="partner_key",
- *                     in="query",
- *                     @OA\Schema(type="string"),
- *                 ),
- *                 @OA\Parameter(
- *                     name="type",
- *                     in="query",
- *                     @OA\Schema(type="string"),
- *                 ),
- *                  @OA\Parameter(
- *                     name="site",
- *                     in="query",
- *                     description="internet site",
- *                     @OA\Schema(type="string"),
- *                 ),
- *                @OA\Parameter(
- *                     name="status",
+ *                     name="published",
  *                     in="query",
  *                     @OA\Schema(type="integer"),
  *                  @OA\Examples(example="true", value="1", summary="true"),
  *                  @OA\Examples(example="false", value="0", summary="false"),
  *                 ),
+ *                 @OA\Parameter(
+ *                     name="title",
+ *                     in="query",
+ *                     @OA\Schema(type="string"),
+ *                 ),
+ *                  @OA\Parameter(
+ *                     name="description",
+ *                     in="query",
+ *                     @OA\Schema(type="string"),
+ *                 ),
+ *                @OA\Parameter(
+ *                     name="expired_date",
+ *                     in="query",
+ *                     @OA\Schema(type="date"),
+ *                 ),
+ *                @OA\Parameter(
+ *                     name="publish_date",
+ *                     in="query",
+ *                     @OA\Schema(type="string"),
+ *                 ),
+ *                @OA\Parameter(
+ *                     name="expired_date",
+ *                     in="query",
+ *                     @OA\Schema(type="string"),
+ *                 ),
  *                   @OA\Parameter(
  *                     name="sort",
  *                     in="query",
  *                     description="sort",
- *                       @OA\Examples(example="sorting1", value="-name,id", summary="name DESC,id ASC"),
- *                       @OA\Examples(example="sorting2", value="-id, name", summary="id DESC,name ASC"),
+ *                       @OA\Examples(example="sorting1", value="title,-publish_date", summary="title ASC,publish_date DESC"),
+ *                       @OA\Examples(example="sorting2", value="-publish_date, title", summary="publish_date DESC,title ASC"),
  *                     @OA\Schema(type="string"),
  *                 ),
  *
@@ -77,73 +88,41 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Post(
- *     path="/api/v1/partners",
- *     tags={"partners"},
- *     summary="Adds a new partners",
+ *     path="/api/v1/ads",
+ *     tags={"ads"},
+ *     summary="Adds a new Ad",
  *     security={{ "bearerAuth":{} }},
  *     @OA\RequestBody(
  *         @OA\MediaType(
  *             mediaType="application/json",
  *             @OA\Schema(
  *                 @OA\Property(
- *                     property="name",
+ *                     property="published",
+ *                     type="integer"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="title",
  *                     type="string"
  *                 ),
  *                 @OA\Property(
- *                     property="partner_key",
+ *                     property="description",
  *                     type="string"
  *                 ),
  *                 @OA\Property(
- *                     property="status",
- *                     type="boolean"
+ *                     property="expired_date",
+ *                     type="date"
  *                 ),
  *                 @OA\Property(
- *                     property="type",
- *                     type="string"
+ *                     property="publish_date",
+ *                     type="date"
  *                 ),
- *                 @OA\Property(
- *                     property="company_name",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="address",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="postcode",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="country",
- *                     description="id страны из справочника стран",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="city",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="site",
- *                     description="internet site",
- *                     type="string",
- *                 ),
- *                  @OA\Property(
- *                     property="tax_number",
- *                     type="string"
- *                 ),
+
  *                 example={
- *                   "name": "Partner name",
- *                   "partner_key": "PartnerKey",
- *                   "status": "1",
- *                   "type": "buying",
- *                   "company_name": "P1 Company Name",
- *                   "address": "Petrova st.",
- *                   "postcode": "666666",
- *                   "country": "11",
- *                   "city": "Praha",
- *                   "site": "http://p1site.com",
- *                   "tax_number": "666999888555222",
- *
+ *                   "published": 0,
+ *                   "title": "Ad title",
+ *                   "description": "Ad description",
+ *                   "expired_date": "+1M",
+ *                   "publish_date": "2024-02-10"
  *                  }
  *             )
  *         )
@@ -157,9 +136,9 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Put(
- *     path="/api/v1/partners/{id}",
- *     tags={"partners"},
- *     summary="Edit partners",
+ *     path="/api/v1/ads/{id}",
+ *     tags={"ads"},
+ *     summary="Edit ad",
  *     security={{ "bearerAuth":{} }},
  *      @OA\Parameter(
  *                     name="id",
@@ -171,54 +150,33 @@ use yii\rest\ActiveController;
  *         @OA\MediaType(
  *             mediaType="application/json",
  *             @OA\Schema(
+ *
  *                 @OA\Property(
- *                     property="name",
- *                     type="string"
+ *                     property="status_id",
+ *                     type="integer"
  *                 ),
  *                 @OA\Property(
- *                     property="partner_key",
- *                     type="string"
+ *                     property="published",
+ *                     type="integer"
  *                 ),
  *                 @OA\Property(
- *                     property="status",
- *                     type="boolean"
- *                 ),
- *                 @OA\Property(
- *                     property="type",
+ *                     property="title",
  *                     type="string"
  *                 ),
  *                 @OA\Property(
- *                     property="company_name",
+ *                     property="description",
  *                     type="string"
  *                 ),
- *                  @OA\Property(
- *                     property="address",
- *                     type="string"
+ *                 @OA\Property(
+ *                     property="expired_date",
+ *                     type="date"
  *                 ),
- *                  @OA\Property(
- *                     property="postcode",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="country",
- *                     description="id страны из справочника стран",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="city",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="site",
- *                     description="internet site",
- *                     type="string",
- *                 ),
- *                  @OA\Property(
- *                     property="tax_number",
- *                     type="string"
+ *                 @OA\Property(
+ *                     property="publish_date",
+ *                     type="date"
  *                 ),
  *                 example={
- *                   "name": "New name partner",
+ *                   "title": "New ad title",
  *                  }
  *             )
  *         )
@@ -232,9 +190,9 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Patch(
- *     path="/api/v1/partners/{id}",
- *     tags={"partners"},
- *     summary="Update fields partners",
+ *     path="/api/v1/ads/{id}",
+ *     tags={"ads"},
+ *     summary="Update fields ad",
  *     security={{ "bearerAuth":{} }},
  *      @OA\Parameter(
  *                     name="id",
@@ -246,54 +204,33 @@ use yii\rest\ActiveController;
  *         @OA\MediaType(
  *             mediaType="application/json",
  *             @OA\Schema(
+ *
  *                 @OA\Property(
- *                     property="name",
- *                     type="string"
+ *                     property="status_id",
+ *                     type="integer"
  *                 ),
  *                 @OA\Property(
- *                     property="partner_key",
- *                     type="string"
+ *                     property="published",
+ *                     type="integer"
  *                 ),
  *                 @OA\Property(
- *                     property="status",
- *                     type="boolean"
- *                 ),
- *                 @OA\Property(
- *                     property="type",
+ *                     property="title",
  *                     type="string"
  *                 ),
  *                 @OA\Property(
- *                     property="company_name",
+ *                     property="description",
  *                     type="string"
  *                 ),
- *                  @OA\Property(
- *                     property="address",
- *                     type="string"
+ *                 @OA\Property(
+ *                     property="expired_date",
+ *                     type="date"
  *                 ),
- *                  @OA\Property(
- *                     property="postcode",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="country",
- *                     description="id страны из справочника стран",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="city",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="site",
- *                     description="internet site",
- *                     type="string",
- *                 ),
- *                  @OA\Property(
- *                     property="tax_number",
- *                     type="string"
+ *                 @OA\Property(
+ *                     property="publish_date",
+ *                     type="date"
  *                 ),
  *                 example={
- *                   "name": "New name partner",
+ *                   "title": "New ad title",
  *                  }
  *             )
  *         )
@@ -307,9 +244,9 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Delete(
- *     path="/api/v1/partners/{id}",
- *     tags={"partners"},
- *     summary="Delete partners",
+ *     path="/api/v1/ads/{id}",
+ *     tags={"ads"},
+ *     summary="Delete ad",
  *     security={{ "bearerAuth":{} }},
  *     @OA\Parameter(
  *          name="id",
@@ -322,7 +259,7 @@ use yii\rest\ActiveController;
  *     @OA\Response(response=404,description="Not Found")
  * )
  */
-class AdsController extends ActiveController
+class AdsController extends BaseActiveController
 {
     public $modelClass = Ads::class;
 

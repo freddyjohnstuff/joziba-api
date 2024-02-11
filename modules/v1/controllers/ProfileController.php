@@ -5,20 +5,22 @@ namespace app\modules\v1\controllers;
 use app\models\Ads;
 use app\models\AdsStatus;
 use app\models\Profile;
+use app\modules\v1\components\controller\BaseActiveController;
+use OpenApi\Annotations as OA;
 use yii\filters\AccessControl;
 use yii\rest\ActiveController;
 
 /**
- * CampaignsController implements the CRUD actions for Partners model.
+ * ProfileController implements the CRUD actions for Profile model.
  */
 /**
- * @OA\Tag(name="partners",description="CRUD actions for Partners"),
+ * @OA\Tag(name="profile",description="CRUD actions for profile"),
  */
 /**
  * @OA\Get(
- *     path="/api/v1/partners",
- *     tags={"partners"},
- *     summary="Get partners",
+ *     path="/api/v1/profile",
+ *     tags={"profile"},
+ *     summary="Get profile",
  *     security={{ "bearerAuth":{} }},
  *     @OA\Parameter(
  *         description="parametr id",
@@ -29,32 +31,14 @@ use yii\rest\ActiveController;
  *         @OA\Examples(example="int", value="1", summary="An int value."),
  *     ),
  *                  @OA\Parameter(
+ *                     name="client_id",
+ *                     in="query",
+ *                     @OA\Schema(type="integer"),
+ *                 ),
+ *                 @OA\Parameter(
  *                     name="name",
  *                     in="query",
  *                     @OA\Schema(type="string"),
- *                 ),
- *                 @OA\Parameter(
- *                     name="partner_key",
- *                     in="query",
- *                     @OA\Schema(type="string"),
- *                 ),
- *                 @OA\Parameter(
- *                     name="type",
- *                     in="query",
- *                     @OA\Schema(type="string"),
- *                 ),
- *                  @OA\Parameter(
- *                     name="site",
- *                     in="query",
- *                     description="internet site",
- *                     @OA\Schema(type="string"),
- *                 ),
- *                @OA\Parameter(
- *                     name="status",
- *                     in="query",
- *                     @OA\Schema(type="integer"),
- *                  @OA\Examples(example="true", value="1", summary="true"),
- *                  @OA\Examples(example="false", value="0", summary="false"),
  *                 ),
  *                   @OA\Parameter(
  *                     name="sort",
@@ -74,73 +58,26 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Post(
- *     path="/api/v1/partners",
- *     tags={"partners"},
- *     summary="Adds a new partners",
+ *     path="/api/v1/profile",
+ *     tags={"profile"},
+ *     summary="Adds a new profile",
  *     security={{ "bearerAuth":{} }},
  *     @OA\RequestBody(
  *         @OA\MediaType(
  *             mediaType="application/json",
  *             @OA\Schema(
- *                 @OA\Property(
- *                     property="name",
- *                     type="string"
+ *                  @OA\Parameter(
+ *                     name="client_id",
+ *                     in="query",
+ *                     @OA\Schema(type="integer"),
  *                 ),
- *                 @OA\Property(
- *                     property="partner_key",
- *                     type="string"
- *                 ),
- *                 @OA\Property(
- *                     property="status",
- *                     type="boolean"
- *                 ),
- *                 @OA\Property(
- *                     property="type",
- *                     type="string"
- *                 ),
- *                 @OA\Property(
- *                     property="company_name",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="address",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="postcode",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="country",
- *                     description="id страны из справочника стран",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="city",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="site",
- *                     description="internet site",
- *                     type="string",
- *                 ),
- *                  @OA\Property(
- *                     property="tax_number",
- *                     type="string"
+ *                 @OA\Parameter(
+ *                     name="name",
+ *                     in="query",
+ *                     @OA\Schema(type="string"),
  *                 ),
  *                 example={
- *                   "name": "Partner name",
- *                   "partner_key": "PartnerKey",
- *                   "status": "1",
- *                   "type": "buying",
- *                   "company_name": "P1 Company Name",
- *                   "address": "Petrova st.",
- *                   "postcode": "666666",
- *                   "country": "11",
- *                   "city": "Praha",
- *                   "site": "http://p1site.com",
- *                   "tax_number": "666999888555222",
- *
+ *                   "name": "Profile name"
  *                  }
  *             )
  *         )
@@ -154,9 +91,9 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Put(
- *     path="/api/v1/partners/{id}",
- *     tags={"partners"},
- *     summary="Edit partners",
+ *     path="/api/v1/profile/{id}",
+ *     tags={"profile"},
+ *     summary="Edit profile",
  *     security={{ "bearerAuth":{} }},
  *      @OA\Parameter(
  *                     name="id",
@@ -168,54 +105,18 @@ use yii\rest\ActiveController;
  *         @OA\MediaType(
  *             mediaType="application/json",
  *             @OA\Schema(
- *                 @OA\Property(
- *                     property="name",
- *                     type="string"
+ *                  @OA\Parameter(
+ *                     name="client_id",
+ *                     in="query",
+ *                     @OA\Schema(type="integer"),
  *                 ),
- *                 @OA\Property(
- *                     property="partner_key",
- *                     type="string"
- *                 ),
- *                 @OA\Property(
- *                     property="status",
- *                     type="boolean"
- *                 ),
- *                 @OA\Property(
- *                     property="type",
- *                     type="string"
- *                 ),
- *                 @OA\Property(
- *                     property="company_name",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="address",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="postcode",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="country",
- *                     description="id страны из справочника стран",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="city",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="site",
- *                     description="internet site",
- *                     type="string",
- *                 ),
- *                  @OA\Property(
- *                     property="tax_number",
- *                     type="string"
+ *                 @OA\Parameter(
+ *                     name="name",
+ *                     in="query",
+ *                     @OA\Schema(type="string"),
  *                 ),
  *                 example={
- *                   "name": "New name partner",
+ *                   "name": "Profile name",
  *                  }
  *             )
  *         )
@@ -229,9 +130,9 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Patch(
- *     path="/api/v1/partners/{id}",
- *     tags={"partners"},
- *     summary="Update fields partners",
+ *     path="/api/v1/profile/{id}",
+ *     tags={"profile"},
+ *     summary="Update fields profile",
  *     security={{ "bearerAuth":{} }},
  *      @OA\Parameter(
  *                     name="id",
@@ -243,54 +144,18 @@ use yii\rest\ActiveController;
  *         @OA\MediaType(
  *             mediaType="application/json",
  *             @OA\Schema(
- *                 @OA\Property(
- *                     property="name",
- *                     type="string"
+ *                  @OA\Parameter(
+ *                     name="client_id",
+ *                     in="query",
+ *                     @OA\Schema(type="integer"),
  *                 ),
- *                 @OA\Property(
- *                     property="partner_key",
- *                     type="string"
- *                 ),
- *                 @OA\Property(
- *                     property="status",
- *                     type="boolean"
- *                 ),
- *                 @OA\Property(
- *                     property="type",
- *                     type="string"
- *                 ),
- *                 @OA\Property(
- *                     property="company_name",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="address",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="postcode",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="country",
- *                     description="id страны из справочника стран",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="city",
- *                     type="string"
- *                 ),
- *                  @OA\Property(
- *                     property="site",
- *                     description="internet site",
- *                     type="string",
- *                 ),
- *                  @OA\Property(
- *                     property="tax_number",
- *                     type="string"
+ *                 @OA\Parameter(
+ *                     name="name",
+ *                     in="query",
+ *                     @OA\Schema(type="string"),
  *                 ),
  *                 example={
- *                   "name": "New name partner",
+ *                   "name": "New profile name",
  *                  }
  *             )
  *         )
@@ -304,9 +169,9 @@ use yii\rest\ActiveController;
 
 /**
  * @OA\Delete(
- *     path="/api/v1/partners/{id}",
- *     tags={"partners"},
- *     summary="Delete partners",
+ *     path="/api/v1/profile/{id}",
+ *     tags={"profile"},
+ *     summary="Delete profile",
  *     security={{ "bearerAuth":{} }},
  *     @OA\Parameter(
  *          name="id",

@@ -1,8 +1,8 @@
 <?php
 
-namespace app\api\modules\v1\traits;
+namespace app\modules\v1\traits;
 
-use app\api\modules\v1\constants\Api;
+use app\modules\v1\constants\Api;
 use Yii;
 use yii\data\ActiveDataProvider;
 
