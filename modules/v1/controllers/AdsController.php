@@ -9,6 +9,14 @@ use yii\filters\AccessControl;
 use yii\rest\ActiveController;
 
 /**
+ * @OA\\Info(
+ *      version="1.0.0",
+ *      title="API Documentation",
+ *      description="Description removed for better illustration of structure.",
+ * )
+ */
+
+/**
  * AdsController.php implements the Rest CRUD Ads.
  */
 /**
@@ -259,7 +267,7 @@ use yii\rest\ActiveController;
  *     @OA\Response(response=404,description="Not Found")
  * )
  */
-class AdsController extends BaseActiveController
+class AdsController extends ActiveController
 {
     public $modelClass = Ads::class;
 

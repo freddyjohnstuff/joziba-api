@@ -11,6 +11,15 @@ use yii\filters\AccessControl;
 use yii\rest\ActiveController;
 
 /**
+ * @OA\\Info(
+ *      version="1.0.0",
+ *      title="API Documentation",
+ *      description="Description removed for better illustration of structure.",
+ * )
+ */
+
+
+/**
  * HelperTypeController implements the CRUD actions for HelperType model.
  */
 /**

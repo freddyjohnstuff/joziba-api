@@ -6,6 +6,14 @@ use Yii;
 use yii\base\Model;
 
 /**
+ * @OA\\Info(
+ *      version="1.0.0",
+ *      title="API Documentation",
+ *      description="Description removed for better illustration of structure.",
+ * )
+ */
+
+/**
  * ContactForm is the model behind the contact form.
  */
 class ContactForm extends Model

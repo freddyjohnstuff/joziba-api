@@ -11,6 +11,14 @@ use yii\filters\AccessControl;
 use yii\rest\ActiveController;
 
 /**
+ * @OA\\Info(
+ *      version="1.0.0",
+ *      title="API Documentation",
+ *      description="Description removed for better illustration of structure.",
+ * )
+ */
+
+/**
  * GoodsCategoryController implements the CRUD actions for Good Category model.
  */
 /**

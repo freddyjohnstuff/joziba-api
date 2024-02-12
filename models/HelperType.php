@@ -5,6 +5,14 @@ namespace app\models;
 use Yii;
 
 /**
+ * @OA\\Info(
+ *      version="1.0.0",
+ *      title="API Documentation",
+ *      description="Description removed for better illustration of structure.",
+ * )
+ */
+
+/**
  * This is the model class for table "helper_type".
  *
  * @property int $id

@@ -10,6 +10,14 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 
+/**
+ * @OA\\Info(
+ *      version="1.0.0",
+ *      title="API Documentation",
+ *      description="Description removed for better illustration of structure.",
+ * )
+ */
+
 class SiteController extends Controller
 {
     public $defaultAction = 'doc';
@@ -18,7 +26,9 @@ class SiteController extends Controller
      */
     public function behaviors()
     {
-        return [
+
+        return parent::behaviors();
+        /*return [
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['logout'],
@@ -36,7 +46,7 @@ class SiteController extends Controller
                     'logout' => ['post'],
                 ],
             ],
-        ];
+        ];*/
     }
 
     /**
