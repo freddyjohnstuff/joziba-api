@@ -215,7 +215,7 @@ use yii\rest\ActiveController;
  *     @OA\Response(response=404,description="Not Found")
  * )
  */
-class HelperTypeController extends ActiveController
+class HelperTypeController extends BaseActiveController
 {
     public $modelClass = HelperType::class;
 

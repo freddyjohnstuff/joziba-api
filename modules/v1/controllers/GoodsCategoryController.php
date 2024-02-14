@@ -223,7 +223,7 @@ use yii\rest\ActiveController;
  *     @OA\Response(response=404,description="Not Found")
  * )
  */
-class GoodsCategoryController extends ActiveController
+class GoodsCategoryController extends BaseActiveController
 {
     public $modelClass = GoodsCategory::class;
 

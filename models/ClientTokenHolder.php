@@ -4,32 +4,26 @@ namespace app\models;
 
 use Yii;
 
-/*
- *
- * @OA\\Info(
- *      version="1.0.0",
- *      title="API Documentation",
- *      description="Description removed for better illustration of structure.",
- * )
- */
-
 /**
- * This is the model class for table "profile".
+ * This is the model class for table "client_token_holder".
  *
  * @property int $id
  * @property int $client_id
- * @property string $name
+ * @property string $access_token
+ * @property int $access_token_expired
+ * @property string $refresh_token
+ * @property int $refresh_token_expired
  *
  * @property Clients $client
  */
-class Profile extends \yii\db\ActiveRecord
+class ClientTokenHolder extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'profile';
+        return 'client_token_holder';
     }
 
     /**
@@ -38,10 +32,9 @@ class Profile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'client_id', 'name'], 'required'],
-            [['id', 'client_id'], 'integer'],
-            [['name'], 'string', 'max' => 255],
-            [['id'], 'unique'],
+            [['client_id', 'access_token', 'access_token_expired', 'refresh_token', 'refresh_token_expired'], 'required'],
+            [['client_id', 'access_token_expired', 'refresh_token_expired'], 'integer'],
+            [['access_token', 'refresh_token'], 'string', 'max' => 255],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Clients::class, 'targetAttribute' => ['client_id' => 'id']],
         ];
     }
@@ -54,7 +47,10 @@ class Profile extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'client_id' => Yii::t('app', 'Client ID'),
-            'name' => Yii::t('app', 'Name'),
+            'access_token' => Yii::t('app', 'Access Token'),
+            'access_token_expired' => Yii::t('app', 'Access Token Expired'),
+            'refresh_token' => Yii::t('app', 'Refresh Token'),
+            'refresh_token_expired' => Yii::t('app', 'Refresh Token Expired'),
         ];
     }
 

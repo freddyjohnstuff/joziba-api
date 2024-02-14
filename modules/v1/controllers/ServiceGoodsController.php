@@ -6,6 +6,7 @@ use app\models\Ads;
 use app\models\AdsStatus;
 use app\models\ServiceGoods;
 use app\modules\v1\components\controller\BaseActiveController;
+use app\modules\v1\components\controller\BaseController;
 use OpenApi\Annotations as OA;
 use yii\filters\AccessControl;
 use yii\rest\ActiveController;
@@ -214,7 +215,7 @@ use yii\rest\ActiveController;
  *     @OA\Response(response=404,description="Not Found")
  * )
  */
-class ServiceGoodsController extends ActiveController
+class ServiceGoodsController extends BaseActiveController
 {
     public $modelClass = ServiceGoods::class;
 

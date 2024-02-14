@@ -217,7 +217,7 @@ use yii\rest\ActiveController;
  *     @OA\Response(response=404,description="Not Found")
  * )
  */
-class GoodsHelpersValueController extends ActiveController
+class GoodsHelpersValueController extends BaseActiveController
 {
     public $modelClass = GoodsHelpersValue::class;
 

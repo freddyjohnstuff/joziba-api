@@ -1,7 +1,7 @@
 <?php
 
 namespace app\models;
-/**
+/*
  * @OA\\Info(
  *      version="1.0.0",
  *      title="API Documentation",
@@ -56,6 +56,11 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
 
         return null;
     }
+
+    public static function loginByAccessToken() {
+
+    }
+
 
     /**
      * Finds user by username

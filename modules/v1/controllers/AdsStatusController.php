@@ -168,7 +168,7 @@ use yii\rest\ActiveController;
  *     @OA\Response(response=404,description="Not Found")
  * )
  */
-class AdsStatusController extends ActiveController
+class AdsStatusController extends BaseActiveController
 {
     public $modelClass = AdsStatus::class;
 

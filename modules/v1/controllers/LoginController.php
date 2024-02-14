@@ -4,6 +4,7 @@ namespace app\modules\v1\controllers;
 
 use app\models\Ads;
 use app\modules\v1\components\controller\BaseActiveController;
+use app\modules\v1\components\controller\BaseController;
 use OpenApi\Annotations as OA;
 use yii\filters\AccessControl;
 use yii\rest\ActiveController;
@@ -267,9 +268,8 @@ use yii\rest\ActiveController;
  *     @OA\Response(response=404,description="Not Found")
  * )
  */
-class AdsController extends BaseActiveController
+class LoginController extends BaseController
 {
-    public $modelClass = Ads::class;
 
     public function behaviors()
     {
@@ -279,11 +279,16 @@ class AdsController extends BaseActiveController
             'rules' => [
                 [
                     'allow' => true,
-                    'actions' => ['create', 'update', 'delete', 'view', 'index', 'options'],
+                    'actions' => [
+                        'login', 'logout', 'delete', 'view', 'index', 'options'
+                    ],
                     /*'roles' => [],*/
                 ],
             ],
         ];
         return $behaviors;
     }
+
+
+
 }

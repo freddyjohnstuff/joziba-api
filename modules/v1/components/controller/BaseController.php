@@ -3,11 +3,10 @@
 namespace app\modules\v1\components\controller;
 
 use OpenApi\Annotations as OA;
-use Yii;
 use app\modules\v1\traits\ControllerActionsDefault;
 use yii\filters\auth\HttpBearerAuth;
-use yii\filters\auth\HttpHeaderAuth;
-use yii\rest\ActiveController;
+use yii\gii\CodeFile;
+use yii\web\Controller;
 
 /**
  * @OA\WInfo(
@@ -28,19 +27,15 @@ use yii\rest\ActiveController;
  *     )
  * )
  */
-class BaseActiveController extends ActiveController
+class BaseController extends \yii\rest\Controller
 {
-    /*use ControllerActionsDefault;*/
-    public $enableCsrfValidation = false;
+/*    use ControllerActionsDefault;*/
 
-    public $auth = null;
+    public $enableCsrfValidation = false;
     public function behaviors()
     {
+
         $behaviors = parent::behaviors();
-        $behaviors['basicAuth'] = [
-            'class' => HttpHeaderAuth::class,
-            'pattern' =>'/^(.*?)$/'
-        ];
         $behaviors['corsFilter'] = [
             'class' => \yii\filters\Cors::class,
             'cors' => [
@@ -58,5 +53,17 @@ class BaseActiveController extends ActiveController
             ]
         ];
         return $behaviors;
+    }
+
+    public function returnWithError($message, $code = 400) {
+        return [
+            'error' => true,
+            'message' => $message,
+            'code' => $code
+        ];
+    }
+
+    public function returnSuccess($scope) {
+        return array_merge(['error' => false], $scope);
     }
 }

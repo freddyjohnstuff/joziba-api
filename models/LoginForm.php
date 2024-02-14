@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 
-/**
+/*
  * @OA\\Info(
  *      version="1.0.0",
  *      title="API Documentation",

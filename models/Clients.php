@@ -3,14 +3,6 @@
 namespace app\models;
 
 use Yii;
-/**
- * @OA\\Info(
- *      version="1.0.0",
- *      title="API Documentation",
- *      description="Description removed for better illustration of structure.",
- * )
- */
-
 
 /**
  * This is the model class for table "clients".
@@ -19,8 +11,8 @@ use Yii;
  * @property string $email
  * @property string $phone
  * @property string $password
- * @property string|null $access_token
- * @property string|null $renew_token
+ * @property string|null $reset_access_token
+ * @property string|null $remove_account_token
  *
  * @property Ads[] $ads
  * @property Profile[] $profiles
@@ -41,11 +33,9 @@ class Clients extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'email', 'phone', 'password'], 'required'],
-            [['id'], 'integer'],
+            [['email', 'phone', 'password'], 'required'],
             [['email', 'phone', 'password'], 'string', 'max' => 100],
-            [['access_token', 'renew_token'], 'string', 'max' => 255],
-            [['id'], 'unique'],
+            [['reset_access_token', 'remove_account_token'], 'string', 'max' => 255],
         ];
     }
 
@@ -59,8 +49,8 @@ class Clients extends \yii\db\ActiveRecord
             'email' => Yii::t('app', 'Email'),
             'phone' => Yii::t('app', 'Phone'),
             'password' => Yii::t('app', 'Password'),
-            'access_token' => Yii::t('app', 'Access Token'),
-            'renew_token' => Yii::t('app', 'Renew Token'),
+            'reset_access_token' => Yii::t('app', 'Reset Access Token'),
+            'remove_account_token' => Yii::t('app', 'Remove Account Token'),
         ];
     }
 
@@ -83,7 +73,6 @@ class Clients extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Profile::class, ['client_id' => 'id']);
     }
-
 
     public function fields()
     {

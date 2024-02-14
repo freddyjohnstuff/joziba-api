@@ -192,7 +192,7 @@ use yii\rest\ActiveController;
  *     @OA\Response(response=404,description="Not Found")
  * )
  */
-class ProfileController extends ActiveController
+class ProfileController extends BaseActiveController
 {
     public $modelClass = Profile::class;
 

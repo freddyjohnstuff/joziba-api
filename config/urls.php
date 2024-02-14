@@ -3,6 +3,7 @@
 return [
     'enablePrettyUrl' => true,
     'showScriptName' => false,
+    'enableStrictParsing' => true,
     'rules' => [
         [
             'class' => \yii\rest\UrlRule::class,
@@ -12,6 +13,10 @@ return [
                 'v1/ads-status',
                 'v1/goods-category',
                 'v1/goods-helpers',
+                'v1/goods-helpers-value',
+                'v1/helper-type',
+                'v1/profile',
+                'v1/service-goods',
             ],
             'prefix' => 'api',
             'patterns' => [
@@ -27,23 +32,16 @@ return [
             'class' => \yii\rest\UrlRule::class,
             'pluralize' => false,
             'controller' => [
-                'v1/cpa-postbacks'
+                'v1/sing-up',
+                'v1/sing-in',
+                'v1/log-out',
+                'v1/reset-password',
             ],
             'prefix' => 'api',
-            'extraPatterns' => [
-                'POST,GET recipient' => 'recipient',
-            ],
-        ],
-        [
-            'class' => \yii\rest\UrlRule::class,
-            'pluralize' => false,
-            'controller' => ['scores' => 'v1/partners-scores'],
-            'prefix' => 'api/v1/partners/<partner_id:\\d+>',
             'patterns' => [
-                'GET' => 'view',
-                '{id}' => 'options',
-                '' => 'options'
-            ],
+                'POST' => 'index',
+/*                '' => 'options',*/
+            ]
         ],
         [
             'class' => \yii\rest\UrlRule::class,
