@@ -35,6 +35,7 @@ return [
                 'v1/sing-up',
                 'v1/sing-in',
                 'v1/log-out',
+                'v1/renew',
                 'v1/reset-password',
             ],
             'prefix' => 'api',

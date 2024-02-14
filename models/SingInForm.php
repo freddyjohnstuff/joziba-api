@@ -75,10 +75,37 @@ class SingInForm extends Model
         return false;
     }
 
+    /**
+     * @param $accessToken
+     * @return false|int
+     */
     public function logout($accessToken) {
         $client = ClientTokenHolder::find()->where(['access_token' => $accessToken])->one();
         if($client) {
             return $this->removeClientTokens($client);
+        }
+        return false;
+    }
+
+    public function renewAccessToken($refreshToken) {
+        /** @var ClientTokenHolder $clientToken */
+        $clientToken = ClientTokenHolder::find()
+            ->where(
+                [
+                    'AND',
+                    ['refresh_token' => $refreshToken],
+                    ['>=', 'refresh_token_expired', time()]
+                ]
+            )->one();
+        if($clientToken) {
+            $clientTokenId = $clientToken->id;
+            if(
+                $this->prolongClientTokens($clientToken)
+                &&
+                $this->prolongClientTokens($clientToken)
+            ) {
+                return ClientTokenHolder::findOne($clientTokenId);
+            }
         }
         return false;
     }
@@ -117,10 +144,10 @@ class SingInForm extends Model
 
     /**
      * @param ClientTokenHolder $clientTokens
-     * @return void
+     * @return int
      */
     private function prolongClientTokens($clientTokens) {
-        ClientTokenHolder::updateAll(
+        return ClientTokenHolder::updateAll(
             ['access_token_expired' => time() + 1200,
                 'refresh_token_expired' => time() + 24 * 3600],
             ['id' => $clientTokens->id]
@@ -129,10 +156,10 @@ class SingInForm extends Model
 
     /**
      * @param ClientTokenHolder $clientTokens
-     * @return void
+     * @return int
      */
     private function renewClientTokens($clientTokens) {
-        ClientTokenHolder::updateAll(
+        return ClientTokenHolder::updateAll(
             [
                 'access_token' => sha1($clientTokens->client->email . $clientTokens->client->phone . time()),
                 'refresh_token' => sha1(md5($clientTokens->client->email . $clientTokens->client->phone . time() . rand(0,999)))

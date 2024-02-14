@@ -64,6 +64,7 @@ class SingUpForm extends Model
         $exist = Clients::find()->where(['OR', ['email' => $this->email], ['phone' => $this->phone]])->exists();
         if($exist) {
             $this->addError('email', 'User by this email/phone exist');
+            return false;
         }
 
         $client = new Clients();
