@@ -10,7 +10,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 
-/**
+/*
  * @OA\\Info(
  *      version="1.0.0",
  *      title="API Documentation",
@@ -49,7 +49,7 @@ class SiteController extends Controller
                     Yii::getAlias('@app/models'),
                 ],
                 //The security key
-                'api_key' => 'test' /*env('TEST_TOKEN')*/,
+                'api_key' => md5('test_api_key') /*env('TEST_TOKEN')*/,
             ],
         ];
     }

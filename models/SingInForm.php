@@ -51,7 +51,7 @@ class SingInForm extends Model
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-            if (!$user || $this->hashPasswd($user->email,$user->password) === $this->hashPasswd($this->email,$this->password)) {
+            if (!($user && $this->hashPasswd($user->email,$user->password) == $this->hashPasswd($this->email,$this->password))) {
                 $this->addError($attribute, 'Incorrect username or password.');
             }
         }

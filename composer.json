@@ -21,7 +21,7 @@
         "codeception/module-rest": "^1.3",
         "yiithings/yii2-dotenv": "*",
         "zircote/swagger-php": "^4.8",
-        "doctrine/annotations": "^2.0",
+        "doctrine/annotations": "*",
         "ext-json": "*"
     },
     "require-dev": {

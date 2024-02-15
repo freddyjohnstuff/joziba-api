@@ -9,7 +9,7 @@ use yii\gii\CodeFile;
 use yii\web\Controller;
 
 /**
- * @OA\WInfo(
+ * @OA\Info(
  *     title="Joziba backend api"
  *     version="1.0",
  * )
@@ -56,6 +56,7 @@ class BaseController extends \yii\rest\Controller
     }
 
     public function returnWithError($message, $code = 400) {
+        \Yii::$app->response->statusCode = $code;
         return [
             'error' => true,
             'message' => $message,
@@ -64,6 +65,7 @@ class BaseController extends \yii\rest\Controller
     }
 
     public function returnSuccess($scope) {
+        \Yii::$app->response->statusCode = 200;
         return array_merge(['error' => false], $scope);
     }
 }

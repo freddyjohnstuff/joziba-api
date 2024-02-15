@@ -3,8 +3,12 @@
 return [
     'enablePrettyUrl' => true,
     'showScriptName' => false,
-    'enableStrictParsing' => true,
+    /*'enableStrictParsing' => true,*/
     'rules' => [
+        [
+            'class' => \yii\rest\UrlRule::class,
+            'controller' => 'site'
+        ],
         [
             'class' => \yii\rest\UrlRule::class,
             'pluralize' => false,

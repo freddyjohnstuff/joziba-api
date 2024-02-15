@@ -11,6 +11,19 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 
+/**
+ * @OA\\Info(
+ *      version="1.0.0",
+ *      title="API Documentation",
+ *      description="Description removed for better illustration of structure.",
+ * )
+ */
+
+/**
+ * @OA\Tag(name="renew",description="Renew actions"),
+ */
+
+
 class SingInController extends BaseController
 {
     public function behaviors()

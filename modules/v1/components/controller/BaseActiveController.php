@@ -10,7 +10,7 @@ use yii\filters\auth\HttpHeaderAuth;
 use yii\rest\ActiveController;
 
 /**
- * @OA\WInfo(
+ * @OA\Info(
  *     title="Joziba backend api"
  *     version="1.0",
  * )

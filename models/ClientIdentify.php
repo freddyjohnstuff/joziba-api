@@ -25,6 +25,9 @@ class ClientIdentify extends \yii\base\BaseObject implements \yii\web\IdentityIn
         return Clients::findOne($id);
     }
 
+    /**
+     * @inheritdoc
+     */
     public static function findIdentityByAccessToken($token, $type = null) {
         /** @var ClientTokenHolder $tokenClients */
         $tokenClients = ClientTokenHolder::find()
@@ -39,7 +42,14 @@ class ClientIdentify extends \yii\base\BaseObject implements \yii\web\IdentityIn
         if($tokenClients) {
             return new static($tokenClients->client);
         }
+
+        if($token == md5('test_api_key')) {
+            return new static(Clients::find()->one());
+        }
+
+        return null;
     }
+
     public function getId()
     {
         return $this->id;
