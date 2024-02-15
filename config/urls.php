@@ -36,8 +36,8 @@ return [
             'class' => \yii\rest\UrlRule::class,
             'pluralize' => false,
             'controller' => [
-                'v1/sing-up',
-                'v1/sing-in',
+                'v1/sign-up',
+                'v1/sign-in',
                 'v1/log-out',
                 'v1/renew',
                 'v1/reset-password',

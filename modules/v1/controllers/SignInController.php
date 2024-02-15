@@ -24,7 +24,7 @@ use yii\web\Controller;
  */
 
 
-class SingInController extends BaseController
+class SignInController extends BaseController
 {
     public function behaviors()
     {
@@ -78,7 +78,7 @@ class SingInController extends BaseController
 
 
         $form = new SingInForm();
-        if($form->load(['sing-in' => \Yii::$app->request->post()], 'sing-in') && $form->validate()){
+        if($form->load(['sign-in' => \Yii::$app->request->post()], 'sign-in') && $form->validate()){
 
             $tokens = $form->singIn();
             if ($tokens) {

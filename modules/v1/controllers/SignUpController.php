@@ -23,7 +23,7 @@ use yii\web\Controller;
  */
 
 
-class SingUpController extends BaseController
+class SignUpController extends BaseController
 {
     public function behaviors()
     {
