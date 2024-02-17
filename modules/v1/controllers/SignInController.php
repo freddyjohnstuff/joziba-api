@@ -2,7 +2,7 @@
 
 namespace app\modules\v1\controllers;
 
-use app\models\SingInForm;
+use app\models\SignInForm;
 use app\models\SingUpForm;
 use app\modules\v1\components\controller\BaseActiveController;
 use app\modules\v1\components\controller\BaseController;
@@ -77,7 +77,7 @@ class SignInController extends BaseController
         }
 
 
-        $form = new SingInForm();
+        $form = new SignInForm();
         if($form->load(['sign-in' => \Yii::$app->request->post()], 'sign-in') && $form->validate()){
 
             $tokens = $form->singIn();

@@ -26,7 +26,8 @@ class SiteController extends Controller
      */
     public function actions()
     {
-        return [
+        $actions = parent::actions();
+        return array_merge([
             'index',
             'error' => [
                 'class' => 'yii\web\ErrorAction',
@@ -52,7 +53,7 @@ class SiteController extends Controller
                 //The security key
                 'api_key' => md5('test_api_key') /*env('TEST_TOKEN')*/,
             ],
-        ];
+        ], $actions);
     }
 
     /**

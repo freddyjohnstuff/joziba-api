@@ -2,7 +2,7 @@
 
 namespace app\modules\v1\controllers;
 
-use app\models\SingInForm;
+use app\models\SignInForm;
 use app\models\SingUpForm;
 use app\modules\v1\components\controller\BaseActiveController;
 use app\modules\v1\components\controller\BaseController;
@@ -69,7 +69,7 @@ class LogOutController extends BaseController
             \Yii::$app->end();
         }
 
-        $form = new SingInForm();
+        $form = new SignInForm();
 
         if($form->logout($post['access_token'])) {
             return $this->returnSuccess([

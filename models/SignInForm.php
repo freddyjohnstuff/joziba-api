@@ -19,7 +19,7 @@ use yii\base\Model;
  * @property-read User|null $user
  *
  */
-class SingInForm extends Model
+class SignInForm extends Model
 {
     public $email;
     public $password;
@@ -51,7 +51,7 @@ class SingInForm extends Model
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
-            if (!($user && $this->hashPasswd($user->email,$user->password) == $this->hashPasswd($this->email,$this->password))) {
+            if (!($user && $user->password == $this->hashPasswd($this->email,$this->password))) {
                 $this->addError($attribute, 'Incorrect username or password.');
             }
         }
@@ -68,7 +68,7 @@ class SingInForm extends Model
             if(!$client) {
                 $client = $this->createClientTokens($user);
             }
-            $this->renewClientTokens($client);
+            /*$this->renewClientTokens($client);*/
             $this->prolongClientTokens($client);
             return $client->toArray();
         }

@@ -7,6 +7,7 @@ use app\modules\v1\traits\ControllerActionsDefault;
 use yii\filters\auth\HttpBearerAuth;
 use yii\gii\CodeFile;
 use yii\web\Controller;
+use yii\web\Request;
 
 /**
  * @OA\Info(
@@ -58,14 +59,37 @@ class BaseController extends \yii\rest\Controller
     public function returnWithError($message, $code = 400) {
         \Yii::$app->response->statusCode = $code;
         return [
-            'error' => true,
+            'code' => $code,
             'message' => $message,
-            'code' => $code
+            'request' => $this->retrieveRequestBody(\Yii::$app->request)
         ];
     }
 
-    public function returnSuccess($scope) {
-        \Yii::$app->response->statusCode = 200;
-        return array_merge(['error' => false], $scope);
+    public function returnSuccess($scope, $code  = 200) {
+        \Yii::$app->response->statusCode = $code;
+        return [
+            'code' => $code,
+            'data' => $scope,
+            'request' => $this->retrieveRequestBody(\Yii::$app->request)
+        ];
+    }
+
+    /**
+     * @param Request $request
+     * @return void
+     */
+    private function retrieveRequestBody($request) {
+        switch ($request->method) {
+            case 'DELETE':
+            case 'GET':
+                return $request->get();
+                break;
+            case 'PUT':
+            case 'UPDATE':
+            case 'POST':
+                return $request->post();
+                break;
+        }
+        return null;
     }
 }

@@ -3,7 +3,7 @@
 namespace app\modules\v1\controllers;
 
 use app\models\ClientTokenHolder;
-use app\models\SingInForm;
+use app\models\SignInForm;
 use app\models\SingUpForm;
 use app\modules\v1\components\controller\BaseActiveController;
 use app\modules\v1\components\controller\BaseController;
@@ -69,7 +69,7 @@ class RenewController extends BaseController
             return $this->returnWithError('Some field sending incorrect');
         }
 
-        $form = new SingInForm();
+        $form = new SignInForm();
         $clientToken = $form->renewAccessToken($post['refresh_token']);
         if(!$clientToken){
             return $this->returnWithError('Refresh token expired');
