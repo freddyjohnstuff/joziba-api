@@ -68,9 +68,9 @@ class SignInForm extends Model
             if(!$client) {
                 $client = $this->createClientTokens($user);
             }
-            /*$this->renewClientTokens($client);*/
             $this->prolongClientTokens($client);
-            return $client->toArray();
+            $token = Yii::$app->jwt->createJWTToken($client->toArray());
+            return $token;
         }
         return false;
     }
