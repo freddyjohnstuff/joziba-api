@@ -62,42 +62,31 @@ class SignInController extends BaseController
 
         if(!\Yii::$app->request->isPost) {
             return $this->returnWithError('Method not allowed');
-            \Yii::$app->end();
         }
-
-        $post = \Yii::$app->request->post();
-        if(
-            !(
-                isset($post['email']) &&
-                isset($post['password'])
-            )
-        ) {
-            return $this->returnWithError('Some field sending incorrect');
-        }
-
 
         $form = new SignInForm();
         if($form->load(['sign-in' => \Yii::$app->request->post()], 'sign-in') && $form->validate()){
-
             $tokens = $form->singIn();
-            // $token = Yii::$app->jwt->createJWTToken($client->toArray());
             if ($tokens) {
+                \Yii::$app->response->statusCode = 200;
                 return [
                     'access' => \Yii::$app->jwt->createJWTToken(['token' => $tokens['access_token'], 'exp' => $tokens['access_token_expired']]),
                     'refresh' => \Yii::$app->jwt->createJWTToken(['token' => $tokens['refresh_token'], 'exp' => $tokens['refresh_token_expired']])
                 ];
             } else {
-                return $this->returnWithError('Something went wrong, Try again!', 500);
+                \Yii::$app->response->statusCode = 400;
+                return ['message' => 'Something went wrong, Try again!'];
             }
         } else {
+            \Yii::$app->response->statusCode = 400;
             $_allError = [];
             $_errors = $form->getErrors();
             if(!empty($_errors)) {
-                foreach ($_errors as $_error) {
-                    $_allError[] = $_error[0];
+                foreach ($_errors as $key => $_error) {
+                    $_allError[$key] = $_error[0];
                 }
             }
-            return $this->returnWithError(implode(',', $_allError));
+            return ['request' => $_allError];
         }
     }
 

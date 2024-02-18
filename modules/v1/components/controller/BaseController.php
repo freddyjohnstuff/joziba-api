@@ -59,9 +59,7 @@ class BaseController extends \yii\rest\Controller
     public function returnWithError($message, $code = 400) {
         \Yii::$app->response->statusCode = $code;
         return [
-            'code' => $code,
             'message' => $message,
-            'request' => $this->retrieveRequestBody(\Yii::$app->request)
         ];
     }
 
