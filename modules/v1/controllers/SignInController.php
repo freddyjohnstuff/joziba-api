@@ -73,7 +73,6 @@ class SignInController extends BaseController
             )
         ) {
             return $this->returnWithError('Some field sending incorrect');
-            \Yii::$app->end();
         }
 
 
@@ -81,10 +80,12 @@ class SignInController extends BaseController
         if($form->load(['sign-in' => \Yii::$app->request->post()], 'sign-in') && $form->validate()){
 
             $tokens = $form->singIn();
+            // $token = Yii::$app->jwt->createJWTToken($client->toArray());
             if ($tokens) {
-                return $this->returnSuccess([
-                    'tokens' => $tokens
-                ]);
+                return [
+                    'access' => \Yii::$app->jwt->createJWTToken(['token' => $tokens['access_token'], 'exp' => $tokens['access_token_expired']]),
+                    'refresh' => \Yii::$app->jwt->createJWTToken(['token' => $tokens['refresh_token'], 'exp' => $tokens['refresh_token_expired']])
+                ];
             } else {
                 return $this->returnWithError('Something went wrong, Try again!', 500);
             }
