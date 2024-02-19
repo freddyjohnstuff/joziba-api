@@ -6,9 +6,9 @@ services:
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${PROJECT_DOMAIN}`)"
-            - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-opened-api.rule=Host(`${PROJECT_DOMAIN}`) && (PathPrefix(`/api/`) || PathPrefix(`/media/`))"
+            # - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-opened-api.rule=Host(`${PROJECT_DOMAIN}`) && (PathPrefix(`/api/`) || PathPrefix(`/media/`))"
             - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.tls.certresolver=default"
-            - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=auth"
+            # - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=auth"
 
     database:
         volumes:
