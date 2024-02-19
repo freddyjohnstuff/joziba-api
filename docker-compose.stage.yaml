@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
     php:
+        user: ${DOCKER_USER}
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${PROJECT_DOMAIN}`)"
