@@ -59,25 +59,23 @@ class LogOutController extends BaseController
     public function actionIndex()
     {
         if(!\Yii::$app->request->isPost) {
-            return $this->returnWithError('Method not allowed');
-            \Yii::$app->end();
+            \Yii::$app->response->statusCode = 400;
+            return ['message' => 'Method not allowed'];
         }
 
-        $post = \Yii::$app->request->post();
-        if(!isset($post['access_token'])) {
-            return $this->returnWithError('Some field sending incorrect');
-            \Yii::$app->end();
+        $header = \Yii::$app->request->getHeaders()->toArray();
+        if(array_key_exists('x-api-key', $header) === false) {
+            \Yii::$app->response->statusCode = 401;
+            return ['message'=>'Cannot get Api Key!'];
         }
 
+        $XApiKey = $header['x-api-key'][array_keys($header['x-api-key'])[0]];
         $form = new SignInForm();
-
-        if($form->logout($post['access_token'])) {
-            return $this->returnSuccess([
-                'message' => 'Log Out successfully!'
-            ]);
+        if($form->logout($XApiKey)) {
+            return ['message' => 'Log Out successfully!'];
         } else {
-            return $this->returnWithError(
-                'Something went wrong!');
+            \Yii::$app->response->statusCode = 400;
+            return ['message' => 'Something went wrong!'];
         }
     }
 

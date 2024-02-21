@@ -4,6 +4,7 @@ namespace app\modules\v1\controllers;
 
 use app\models\Ads;
 use app\models\AdsStatus;
+use app\models\ClientIdentify;
 use app\models\Profile;
 use app\modules\v1\components\controller\BaseActiveController;
 use OpenApi\Annotations as OA;
@@ -196,8 +197,16 @@ class ProfileController extends BaseActiveController
 {
     public $modelClass = Profile::class;
 
+
+    public function actions()
+    {
+        return [/*'index'*/];
+    }
+
     public function behaviors()
     {
+
+        ClientIdentify::findIdentityByAccessToken(\Yii::$app->request->getHeaders()['']);
         $behaviors = parent::behaviors();
         $behaviors['access'] = [
             'class' => AccessControl::class,

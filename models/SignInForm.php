@@ -102,7 +102,7 @@ class SignInForm extends Model
             if(
                 $this->prolongClientTokens($clientToken)
                 &&
-                $this->prolongClientTokens($clientToken)
+                $this->renewClientTokens($clientToken)
             ) {
                 return ClientTokenHolder::findOne($clientTokenId);
             }
@@ -164,7 +164,7 @@ class SignInForm extends Model
                 'access_token' => sha1($clientTokens->client->email . $clientTokens->client->phone . time()),
                 'refresh_token' => sha1(md5($clientTokens->client->email . $clientTokens->client->phone . time() . rand(0,999)))
             ],
-            ['id' => $clientTokens->client->id]
+            ['id' => $clientTokens->id]
         );
     }
 

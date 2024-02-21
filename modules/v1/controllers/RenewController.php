@@ -61,23 +61,31 @@ class RenewController extends BaseController
     {
 
         if(!\Yii::$app->request->isPost) {
-            return $this->returnWithError('Method not allowed');
+            \Yii::$app->response->statusCode = 400;
+            return ['message' => 'Method not allowed'];
         }
 
-        $post = \Yii::$app->request->post();
-        if(!isset($post['refresh_token'])) {
-            return $this->returnWithError('Some field sending incorrect');
+        $header = \Yii::$app->request->getHeaders()->toArray();
+
+        if(array_key_exists('x-renew-key', $header) === false) {
+            \Yii::$app->response->statusCode = 401;
+            return ['message'=>'Cannot get Renew Key!'];
         }
+
+        $xRenewKey = $header['x-renew-key'][array_keys($header['x-renew-key'])[0]];
 
         $form = new SignInForm();
-        $clientToken = $form->renewAccessToken($post['refresh_token']);
+        $clientToken = $form->renewAccessToken($xRenewKey);
         if(!$clientToken){
-            return $this->returnWithError('Refresh token expired');
+            \Yii::$app->response->statusCode = 400;
+            return ['message' => 'Refresh token expired!'];
         }
 
-        return $this->returnSuccess([
-            'tokens' => $clientToken
-        ]);
+        return [
+            'access' => \Yii::$app->jwt->createJWTToken(['token' => $clientToken['access_token'], 'exp' => $clientToken['access_token_expired']]),
+            'refresh' => \Yii::$app->jwt->createJWTToken(['token' => $clientToken['refresh_token'], 'exp' => $clientToken['refresh_token_expired']])
+        ];
+
     }
 
 }

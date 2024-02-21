@@ -33,7 +33,6 @@ class BaseActiveController extends ActiveController
     /*use ControllerActionsDefault;*/
     public $enableCsrfValidation = false;
 
-    public $auth = null;
     public function behaviors()
     {
         $behaviors = parent::behaviors();

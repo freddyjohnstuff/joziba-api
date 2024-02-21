@@ -40,6 +40,22 @@ $config = [
             'viewPath' => '@app/mail',
             // send all mails to a file by default.
             'useFileTransport' => true,
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'smtp.gmail.com',
+                'username' => 'asadova.mtt@gmail.com',
+                'password' => 'swAsadovaMtt190##',
+                'port' => '587',
+                'encryption' => 'tls',
+                'scheme' => 'smtps',
+                'streamOptions' => [
+                    'ssl' => [
+                        'allow_self_signed' => true,
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                    ],
+                ]
+            ]
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

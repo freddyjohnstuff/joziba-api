@@ -39,12 +39,11 @@ class Ads extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'client_id', 'status_id', 'title'], 'required'],
-            [['id', 'client_id', 'status_id', 'published'], 'integer'],
+            [['client_id', 'status_id', 'title'], 'required'],
+            [['client_id', 'status_id', 'published'], 'integer'],
             [['description'], 'string'],
             [['expired_date', 'publish_date', 'created_at', 'updated_at', 'expired_at'], 'safe'],
             [['title'], 'string', 'max' => 255],
-            [['id'], 'unique'],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Clients::class, 'targetAttribute' => ['client_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => AdsStatus::class, 'targetAttribute' => ['status_id' => 'id']],
         ];

@@ -7,6 +7,7 @@
 
 namespace app\commands;
 
+use app\components\Mailing;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
@@ -27,8 +28,16 @@ class HelloController extends Controller
      */
     public function actionIndex($message = 'hello world')
     {
-        echo $message . "\n";
 
+        $mailer = new Mailing();
+        $mailer->sendMail(
+            'displaer@yandex.ru',
+            'Test Subject',
+            'Test Message Gmm',
+            '<p>Test message</p><p><a href="">Reset</a></p>'
+        );
+
+        echo $message . "\n";
         return ExitCode::OK;
     }
 }

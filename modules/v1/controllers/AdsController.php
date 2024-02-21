@@ -3,6 +3,7 @@
 namespace app\modules\v1\controllers;
 
 use app\models\Ads;
+use app\models\AdsSearch;
 use app\modules\v1\components\controller\BaseActiveController;
 use OpenApi\Annotations as OA;
 use yii\filters\AccessControl;
@@ -286,4 +287,24 @@ class AdsController extends BaseActiveController
         ];
         return $behaviors;
     }
+
+    public function actions()
+    {
+        $actions = parent::actions();
+        unset($actions['index']);
+        return $actions;
+    }
+
+    public function actionIndex()
+    {
+        $searchModel = new AdsSearch();
+        $params = \Yii::$app->request->queryParams;
+        /*if (!\Yii::$app->user->can(Permissions::VIEW_LIST_COMPANY)) {
+            $params['user_id'] = \Yii::$app->user->getId();
+        }*/
+        $data = $searchModel->search($params);
+        return ['models' => $data->getModels(), 'count' => $data->getTotalCount()];
+    }
+
+
 }

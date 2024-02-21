@@ -21,6 +21,7 @@ return [
                 'v1/helper-type',
                 'v1/profile',
                 'v1/service-goods',
+                'v1/my-data',
             ],
             'prefix' => 'api',
             'patterns' => [
@@ -40,7 +41,7 @@ return [
                 'v1/sign-in',
                 'v1/log-out',
                 'v1/renew',
-                'v1/reset-password',
+                'v1/reset',
             ],
             'prefix' => 'api',
             'patterns' => [
