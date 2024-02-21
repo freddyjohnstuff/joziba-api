@@ -27,6 +27,7 @@ return [
             'patterns' => [
                 'GET {id}' => 'view',
                 'POST' => 'create',
+                'PUT {id}' => 'update',
                 'GET' => 'index',
                 'DELETE {id}' => 'delete',
                 '{id}' => 'options',

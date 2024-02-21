@@ -207,7 +207,7 @@ Get profile data
 
       GET /api/v1/my-data
 
-
+response [success]
 
       {
          "id": 2,
@@ -216,6 +216,14 @@ Get profile data
          "email": "dell@dell.com",
          "phone": "+15552046672"
       }
+
+
+response [error]
+
+      {
+         "message": "Profile not created"
+      }
+
 
 
 ADS Entity
@@ -241,8 +249,7 @@ params:
          -id|id
          -title|title
 
-
-response:
+response [success]:
 
       {
          "models": [
@@ -358,7 +365,58 @@ update ads
 
       PUT /api/v1/ads/{id}
 
+payload [type=Raw/JSON]:
 
+      {
+         "title": "Turka for name coffee!",
+         "description": "Turka for name coffee. Advanced teapot.",
+      }
+   
+
+response [success]:
+
+      {
+         "id": 3,
+         "client_id": 5,
+         "status_id": 1,
+         "published": 1,
+         "title": "Iterator placement!",
+         "description": "Data mining storage PP56232",
+         "expired_date": "2024-03-09",
+         "publish_date": "2024-02-08",
+         "created_at": "2024-02-21 13:59:05",
+         "updated_at": null,
+         "expired_at": null
+      }
+
+response [error]:
+
+      {
+         "name": "Not Found",
+         "message": "Object not found: 30",
+         "code": 0,
+         "status": 404,
+         "type": "yii\\web\\NotFoundHttpException"
+      }
+
+
+delete ads
+
+      DELETE /api/v1/ads/{id}
+
+response [success]
+
+      null
+
+response [error]
+
+      {
+         "name": "Not Found",
+         "message": "Object not found: 30",
+         "code": 0,
+         "status": 404,
+         "type": "yii\\web\\NotFoundHttpException"
+      }
 
 ### Install via Composer
 
