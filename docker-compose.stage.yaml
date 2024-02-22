@@ -19,7 +19,7 @@ services:
         restart: always
         environment:
             ADMINER_DEFAULT_SERVER: database
-            ADMINER_DESIGN: dracula
+            ADMINER_DESIGN: hydra
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-adminer.rule=Host(`${ADMINER_DOMAIN}`)"
