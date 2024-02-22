@@ -418,6 +418,16 @@ response [error]
          "type": "yii\\web\\NotFoundHttpException"
       }
 
+
+Ads Status
+------------
+
+Get Ads status 
+
+      GET /api/v1/ads-status
+
+
+
 ### Install via Composer
 
 If you do not have [Composer](https://getcomposer.org/), you may install it by following the instructions
