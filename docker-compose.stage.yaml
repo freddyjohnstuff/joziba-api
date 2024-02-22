@@ -13,3 +13,20 @@ services:
     database:
         volumes:
             - /web/data/$COMPOSE_PROJECT_NAME/mysql:/var/lib/mysql
+
+    adminer:
+        image: adminer
+        restart: always
+        environment:
+            ADMINER_DEFAULT_SERVER: database
+            ADMINER_DESIGN: galkaev
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-adminer.rule=Host(`${ADMINER_DOMAIN}`)"
+            - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-adminer.loadbalancer.server.port=8080"
+            - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-adminer.tls.certresolver=default"
+            - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-adminer.middlewares=auth"
