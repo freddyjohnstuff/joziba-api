@@ -73,10 +73,17 @@ class SingUpForm extends Model
         $client->password = sha1($this->email . '|' . $this->password1);
         $client->reset_access_token = sha1($client->password . time());
         $client->remove_account_token = sha1('DELETE' . time() . $client->password);
-
         if(!$client->save()) {
             return false;
         }
+
+
+        $profile = new Profile();
+        $profile->client_id = $client->id;
+        $profile->name = 'Name for ' . $client->email;
+        $profile->save(false);
+
+
         return $client->id;
     }
 
