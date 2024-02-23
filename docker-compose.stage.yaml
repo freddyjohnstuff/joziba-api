@@ -6,6 +6,10 @@ services:
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${PROJECT_DOMAIN}`)"
+            - "traefik.http.middlewares.testheader.headers.accesscontrolallowmethods=*"
+            - "traefik.http.middlewares.testheader.headers.accesscontrolalloworigin=*"
+            - "traefik.http.middlewares.testheader.headers.accesscontrolmaxage=100"
+            - "traefik.http.middlewares.testheader.headers.addvaryheader=true"
             - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.tls.certresolver=default"
 
     database:
