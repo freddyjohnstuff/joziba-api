@@ -79,7 +79,7 @@ class ResetController extends BaseController
             if ($reset) {
                 \Yii::$app->response->statusCode = 200;
                 return [
-                    'message' => 'Message sent!' . var_export($reset)
+                    'message' => 'Message sent!'
                 ];
             } else {
                 \Yii::$app->response->statusCode = 400;
@@ -96,8 +96,6 @@ class ResetController extends BaseController
             }
             return ['request' => $_allError];
         }
-
-        \Yii::$app->end();
 
     }
 }
