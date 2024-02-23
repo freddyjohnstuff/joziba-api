@@ -73,8 +73,6 @@ class ResetController extends BaseController
         }
 
 
-
-
         $form = new ResetForm();
         if($form->load(['reset' => \Yii::$app->request->post()], 'reset') && $form->validate()){
             $reset = $form->reset();
@@ -98,6 +96,8 @@ class ResetController extends BaseController
             }
             return ['request' => $_allError];
         }
-    }
 
+        \Yii::$app->end();
+
+    }
 }
