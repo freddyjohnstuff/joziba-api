@@ -20,6 +20,7 @@ use Yii;
  * @property string $fld_key
  * @property string $fld_label
  * @property int $fld_order
+ * @property string|null $fld_breadcrumb
  *
  * @property GoodsHelpers[] $goodsHelpers
  * @property ServiceGoods[] $serviceGoods
@@ -40,11 +41,10 @@ class GoodsCategory extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'parent_id', 'fld_key', 'fld_label'], 'required'],
-            [['id', 'parent_id', 'fld_order'], 'integer'],
-            [['fld_key', 'fld_label'], 'string', 'max' => 255],
+            [['parent_id', 'fld_key', 'fld_label'], 'required'],
+            [['parent_id', 'fld_order'], 'integer'],
+            [['fld_key', 'fld_label', 'fld_breadcrumb'], 'string', 'max' => 255],
             [['fld_key'], 'unique'],
-            [['id'], 'unique'],
         ];
     }
 
@@ -59,6 +59,7 @@ class GoodsCategory extends \yii\db\ActiveRecord
             'fld_key' => Yii::t('app', 'Fld Key'),
             'fld_label' => Yii::t('app', 'Fld Label'),
             'fld_order' => Yii::t('app', 'Fld Order'),
+            'fld_breadcrumb' => Yii::t('app', 'Fld Breadcrumb'),
         ];
     }
 
