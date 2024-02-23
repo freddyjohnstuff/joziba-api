@@ -37,7 +37,7 @@ class BaseController extends \yii\rest\Controller
     {
 
         $behaviors = parent::behaviors();
-        $behaviors['corsFilter'] = [
+        /*$behaviors['corsFilter'] = [
             'class' => \yii\filters\Cors::class,
             'cors' => [
                 'Origin' => ['*'],
@@ -52,7 +52,7 @@ class BaseController extends \yii\rest\Controller
                     'X-Pagination-Per-Page'
                 ],
             ]
-        ];
+        ];*/
         return $behaviors;
     }
 

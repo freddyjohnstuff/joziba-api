@@ -40,7 +40,7 @@ class BaseActiveController extends ActiveController
             'class' => HttpHeaderAuth::class,
             'pattern' =>'/^(.*?)$/'
         ];
-        $behaviors['corsFilter'] = [
+        /*$behaviors['corsFilter'] = [
             'class' => \yii\filters\Cors::class,
             'cors' => [
                 'Origin' => ['*'],
@@ -55,7 +55,7 @@ class BaseActiveController extends ActiveController
                     'X-Pagination-Per-Page'
                 ],
             ]
-        ];
+        ];*/
         return $behaviors;
     }
 }
