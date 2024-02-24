@@ -64,12 +64,12 @@ class LogOutController extends BaseController
         }
 
         $header = \Yii::$app->request->getHeaders()->toArray();
-        if(array_key_exists('Authorization', $header) === false) {
+        if(array_key_exists('authorization', $header) === false) {
             \Yii::$app->response->statusCode = 401;
             return ['message'=>'Cannot get Api Key!'];
         }
 
-        $XApiKey = $header['Authorization'][array_keys($header['Authorization'])[0]];
+        $XApiKey = $header['authorization'][array_keys($header['authorization'])[0]];
         if (preg_match('/^Bearer\s+(.*?)$/', $XApiKey, $matches)) {
             $XApiKey = $matches[1];
         }
