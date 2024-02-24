@@ -58,6 +58,21 @@ class BaseController extends \yii\rest\Controller
         return $behaviors;
     }
 
+    public function beforeAction($action)
+    {
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Credentials: false");
+        header("Access-Control-Allow-Headers: " . implode(',', ['Origin', 'X-Requested-With', 'Accept', 'Authorization']));
+        header("Access-Control-Allow-Methods: " . implode(',', ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']));
+
+        // Access-Control headers are received during OPTIONS requests
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+            /*header("Access-Control-Allow-Headers: Authorization");*/
+        }
+
+        return parent::beforeAction($action);
+    }
+
     public function returnWithError($message, $code = 400) {
         \Yii::$app->response->statusCode = $code;
         return [
