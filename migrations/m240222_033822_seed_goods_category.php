@@ -23,7 +23,7 @@ class m240222_033822_seed_goods_category extends Migration
             [4,'telefonyi-i-svyaz','Телефоны и связь',0,'/telefonyi-i-svyaz'],
                 [13,'smartfony','Смартфоны',4,'/telefonyi-i-svyaz/smartfony'],
                 [14,'planshety','Планшеты',4,'/telefonyi-i-svyaz/planshety'],
-                [15,'resume','Фотоаппараты',4,'/telefonyi-i-svyaz/fotoapparaty'],
+                [15,'fotoapparaty','Фотоаппараты',4,'/telefonyi-i-svyaz/fotoapparaty'],
 
             [5,'odezhda-i-obuv','Одежда и личные вещи',0,'/odezhda-i-obuv'],
                 [16,'jinsy','Джинсы',5,'/odezhda-i-obuv/jinsy'],
