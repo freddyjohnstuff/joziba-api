@@ -67,12 +67,12 @@ class BaseActiveController extends ActiveController
 
         header("Access-Control-Allow-Origin: * ");
         header("Access-Control-Allow-Credentials: true ");
-        header("Access-Control-Allow-Headers: " . implode(',', ['Origin', 'X-Requested-With', 'Accept', 'Authorization']));
         header("Access-Control-Allow-Methods: " . implode(',', ['','GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']));
 
         // Access-Control headers are received during OPTIONS requests
         if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-            /*header("Access-Control-Allow-Headers: Authorization");*/
+            header("Access-Control-Allow-Headers: " . implode(',', ['Origin', 'X-Requested-With', 'Accept', 'Authorization']));
+            Yii::$app->end();
         }
 
         return parent::beforeAction($action);
