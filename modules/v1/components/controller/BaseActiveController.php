@@ -40,13 +40,13 @@ class BaseActiveController extends ActiveController
             'class' => HttpHeaderAuth::class,
             'pattern' =>'/^(.*?)$/'
         ];
-        /*$behaviors['corsFilter'] = [
+        $behaviors['corsFilter'] = [
             'class' => \yii\filters\Cors::class,
             'cors' => [
                 'Origin' => ['*'],
                 'Access-Control-Request-Method' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
                 'Access-Control-Request-Headers' => ['*'],
-                'Access-Control-Allow-Credentials' => true,
+                'Access-Control-Allow-Credentials' => false,
                 'Access-Control-Max-Age' => 86400,
                 'Access-Control-Expose-Headers' => [
                     'X-Pagination-Current-Page',
@@ -55,7 +55,7 @@ class BaseActiveController extends ActiveController
                     'X-Pagination-Per-Page'
                 ],
             ]
-        ];*/
+        ];
         return $behaviors;
     }
 }
