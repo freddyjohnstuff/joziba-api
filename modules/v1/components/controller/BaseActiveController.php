@@ -37,8 +37,8 @@ class BaseActiveController extends ActiveController
     {
         $behaviors = parent::behaviors();
         $behaviors['basicAuth'] = [
-            'class' => HttpHeaderAuth::class,
-            'pattern' =>'/^(.*?)$/'
+            'class' => HttpBearerAuth::class,
+            /*'pattern' =>'/^(.*?)$/'*/
         ];
         $behaviors['corsFilter'] = [
             'class' => \yii\filters\Cors::class,
