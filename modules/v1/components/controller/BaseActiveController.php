@@ -45,7 +45,8 @@ class BaseActiveController extends ActiveController
             'cors' => [
                 'Origin' => ['*'],
                 'Access-Control-Request-Method' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
-                'Access-Control-Request-Headers' => ['Origin', 'X-Requested-With', 'Accept', 'X-Api-Key'],
+                'Access-Control-Request-Headers' => ['*'],
+                'Access-Control-Allow-Headers' => ['Origin', 'X-Requested-With', 'Accept', 'X-Api-Key'],
                 'Access-Control-Allow-Origin' => ['*'],
                 'Access-Control-Allow-Credentials' => false,
                 'Access-Control-Max-Age' => 86400,
