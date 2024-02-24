@@ -12,6 +12,7 @@ $config = [
         '@api' => __DIR__ . '/../modules/v1',
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+        '@upload'   => __DIR__ . '/../web/uploads',
     ],
     'components' => [
         'jwt' => [

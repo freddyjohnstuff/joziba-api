@@ -43,6 +43,7 @@ return [
                 'v1/log-out',
                 'v1/renew',
                 'v1/reset',
+                'v1/media',
             ],
             'prefix' => 'api',
             'patterns' => [
