@@ -67,12 +67,15 @@ class RenewController extends BaseController
 
         $header = \Yii::$app->request->getHeaders()->toArray();
 
-        if(array_key_exists('x-renew-key', $header) === false) {
+        if(array_key_exists('Authorization', $header) === false) {
             \Yii::$app->response->statusCode = 401;
             return ['message'=>'Cannot get Renew Key!'];
         }
 
-        $xRenewKey = $header['x-renew-key'][array_keys($header['x-renew-key'])[0]];
+        $xRenewKey = $header['Authorization'][array_keys($header['Authorization'])[0]];
+        if (preg_match('/^Bearer\s+(.*?)$/', $xRenewKey, $matches)) {
+            $xRenewKey = $matches[1];
+        }
 
         $form = new SignInForm();
         $clientToken = $form->renewAccessToken($xRenewKey);
