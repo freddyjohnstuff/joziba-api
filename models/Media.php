@@ -13,6 +13,7 @@ use Yii;
  * @property string|null $media_url
  * @property string|null $media_path
  * @property string|null $created_at
+ * @property int $client_id
  */
 class Media extends \yii\db\ActiveRecord
 {
@@ -30,8 +31,9 @@ class Media extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['target_id'], 'integer'],
+            [['target_id', 'client_id'], 'integer'],
             [['created_at'], 'safe'],
+            [['client_id'], 'required'],
             [['target_entity', 'media_url', 'media_path'], 'string', 'max' => 255],
         ];
     }
@@ -48,6 +50,7 @@ class Media extends \yii\db\ActiveRecord
             'media_url' => Yii::t('app', 'Media Url'),
             'media_path' => Yii::t('app', 'Media Path'),
             'created_at' => Yii::t('app', 'Created At'),
+            'client_id' => Yii::t('app', 'Client ID'),
         ];
     }
 }

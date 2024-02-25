@@ -61,7 +61,6 @@ class MediaController extends BaseActiveController
      */
     public function actionCreate()
     {
-
         if(!\Yii::$app->request->isPost) {
             \Yii::$app->response->statusCode = 400;
             return ['message' => 'Method not allowed'];
@@ -101,19 +100,17 @@ class MediaController extends BaseActiveController
 
             if (count($files) > 0) {
                 foreach ($files as $file) {
-
-                    return $file;
-                    die;
                     $media = new Media();
                     $media->target_entity = $target;
                     $media->target_id = $post['target_id'];
+                    $media->client_id = $client_id;
                     $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 
-                    $name = md5($target . $post['target_id'] . date('Ymdhis') . time()) . $ext;
+                    $name = md5($target . $post['target_id'] . date('Ymdhis') . time()) . '.' . $ext;
 
-                    if (file_put_contents(\Yii::getAlias('@upload') . '/' . $name)) {
+                    if (move_uploaded_file($file['tmp_name'],\Yii::getAlias('@upload') . '/' . $name)) {
                         $media->media_path = \Yii::getAlias('@upload') . '/' . $name;
-                        $media->media_url = 'http://api.joziba.online/uploads/' . $name;
+                        $media->media_url = 'http://' . env('PROJECT_DOMAIN') . '/uploads/' . $name;
                         $media->save();
                         $imagesCNT++;
                         $images[] = $media->media_url;
@@ -128,9 +125,7 @@ class MediaController extends BaseActiveController
                 ];
             }
         }
-
         return ['message' => 'Something went wrong!'];
-
     }
 
 }
