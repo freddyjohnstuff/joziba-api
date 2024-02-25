@@ -3,6 +3,7 @@
 namespace app\modules\v1\controllers;
 
 use app\lib\tools\clients\ClientTools;
+use app\lib\tools\files\FilesTools;
 use app\models\Media;
 use app\models\SignInForm;
 use app\models\SingUpForm;
@@ -12,6 +13,7 @@ use OpenApi\Annotations as OA;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
+use yii\web\UploadedFile;
 
 /**
  * @OA\\Info(
@@ -25,26 +27,22 @@ use yii\web\Controller;
  * @OA\Tag(name="log-out",description="logout actions"),
  */
 
-class MediaController extends BaseController
+class MediaController extends BaseActiveController
 {
+
+    public $modelClass = Media::class;
+
     public function behaviors()
     {
         $behaviors = parent::behaviors();
         $behaviors['access'] = [
             'class' => AccessControl::class,
-            'only' => ['index'],
             'rules' => [
                 [
                     'allow' => true,
-                    'actions' => ['index'],
+                    'actions' => ['create', 'update', 'delete', 'view', 'index', 'options'],
                     /*'roles' => [],*/
                 ],
-            ],
-        ];
-        $behaviors['verbs'] = [
-            'class' => VerbFilter::class,
-            'actions' => [
-                'index' => ['post'],
             ],
         ];
         return $behaviors;
@@ -52,14 +50,18 @@ class MediaController extends BaseController
 
     public function actions()
     {
-        return ['index'];
+        $actions = parent::actions();
+        unset($actions['create']);
+        return $actions;
     }
+
 
     /**
      * @return array
      */
-    public function actionIndex()
+    public function actionCreate()
     {
+
         if(!\Yii::$app->request->isPost) {
             \Yii::$app->response->statusCode = 400;
             return ['message' => 'Method not allowed'];
@@ -78,15 +80,16 @@ class MediaController extends BaseController
 
         $client = ClientTools::getInstance()->getClientByAccessToken($XApiKey);
         $client_id = ($client) ? $client->id : 0;
-
-
         $post = \Yii::$app->request->post();
+        $files =$_FILES['images'];
+
         if (
             isset($post['target_entity']) &&
             isset($post['target_id']) &&
-            isset($post['images'])
+            !empty($files)
         ) {
 
+            $files = FilesTools::getInstance()->remapFileArr($files);
             $imagesCNT = 0;
             $images = [];
 
@@ -96,13 +99,17 @@ class MediaController extends BaseController
                 $target = 'others';
             }
 
-            if (count($post['images']) > 0) {
-                foreach ($post['images'] as $image) {
+            if (count($files) > 0) {
+                foreach ($files as $file) {
 
+                    return $file;
+                    die;
                     $media = new Media();
                     $media->target_entity = $target;
                     $media->target_id = $post['target_id'];
-                    $name = md5($target . $post['target_id'] . date('Ymdhis') . time());
+                    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+
+                    $name = md5($target . $post['target_id'] . date('Ymdhis') . time()) . $ext;
 
                     if (file_put_contents(\Yii::getAlias('@upload') . '/' . $name)) {
                         $media->media_path = \Yii::getAlias('@upload') . '/' . $name;

@@ -14,6 +14,7 @@ return [
             'pluralize' => false,
             'controller' => [
                 'v1/ads',
+                'v1/my-ads',
                 'v1/ads-status',
                 'v1/goods-category',
                 'v1/goods-helpers',
@@ -22,6 +23,7 @@ return [
                 'v1/profile',
                 'v1/service-goods',
                 'v1/my-data',
+                'v1/media'
             ],
             'prefix' => 'api',
             'patterns' => [
@@ -43,12 +45,11 @@ return [
                 'v1/log-out',
                 'v1/renew',
                 'v1/reset',
-                'v1/media',
             ],
             'prefix' => 'api',
             'patterns' => [
                 'POST' => 'index',
-/*                '' => 'options',*/
+                '' => 'options',
             ]
         ],
         [
