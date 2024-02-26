@@ -4,14 +4,6 @@ namespace app\models;
 
 use Yii;
 
-/*
- * @OA\\Info(
- *      version="1.0.0",
- *      title="API Documentation",
- *      description="Description removed for better illustration of structure.",
- * )
- */
-
 /**
  * This is the model class for table "goods_helpers".
  *
@@ -21,6 +13,7 @@ use Yii;
  * @property string $fld_name
  * @property string $fld_label
  * @property string $fld_default
+ * @property string|null $fld_parameters
  *
  * @property GoodsCategory $category
  * @property GoodsHelpersValue[] $goodsHelpersValues
@@ -42,10 +35,9 @@ class GoodsHelpers extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'category_id', 'type_id', 'fld_name', 'fld_label', 'fld_default'], 'required'],
-            [['id', 'category_id', 'type_id'], 'integer'],
-            [['fld_name', 'fld_label', 'fld_default'], 'string', 'max' => 255],
-            [['id'], 'unique'],
+            [['category_id', 'type_id', 'fld_name', 'fld_label', 'fld_default'], 'required'],
+            [['category_id', 'type_id'], 'integer'],
+            [['fld_name', 'fld_label', 'fld_default', 'fld_parameters'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => GoodsCategory::class, 'targetAttribute' => ['category_id' => 'id']],
             [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => HelperType::class, 'targetAttribute' => ['type_id' => 'id']],
         ];
@@ -63,6 +55,7 @@ class GoodsHelpers extends \yii\db\ActiveRecord
             'fld_name' => Yii::t('app', 'Fld Name'),
             'fld_label' => Yii::t('app', 'Fld Label'),
             'fld_default' => Yii::t('app', 'Fld Default'),
+            'fld_parameters' => Yii::t('app', 'Fld Parameters'),
         ];
     }
 

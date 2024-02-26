@@ -58,10 +58,10 @@ class m240222_033822_seed_goods_category extends Migration
         $this->batchInsert(
             '{{%goods_category}}',
             [
-                'parent_id',
+                'id',
                 'fld_key',
                 'fld_label',
-                'fld_order',
+                'parent_id',
                 'fld_breadcrumb'
             ],
             $data
