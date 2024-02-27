@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Class m240226_022233_seed_goods_helpers
  */
-class m240226_022233_seed_goods_helpers extends Migration
+class m240227_094653_seed_goods_helpers extends Migration
 {
     /**
      * {@inheritdoc}
