@@ -30,7 +30,7 @@ use yii\rest\ActiveController;
  */
 class BaseActiveController extends ActiveController
 {
-    /*use ControllerActionsDefault;*/
+    use ControllerActionsDefault;
     public $enableCsrfValidation = false;
 
     public function behaviors()
@@ -39,6 +39,7 @@ class BaseActiveController extends ActiveController
         $behaviors['basicAuth'] = [
             'class' => HttpBearerAuth::class,
             /*'pattern' =>'/^(.*?)$/'*/
+            'except' => ['index', 'view']
         ];
         $behaviors['corsFilter'] = [
             'class' => \yii\filters\Cors::class,
@@ -76,5 +77,12 @@ class BaseActiveController extends ActiveController
         }
 
         return parent::beforeAction($action);
+    }
+
+
+
+    public function checkIsPost() {
+
+
     }
 }

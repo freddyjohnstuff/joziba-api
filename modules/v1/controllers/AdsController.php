@@ -2,12 +2,15 @@
 
 namespace app\modules\v1\controllers;
 
+use app\lib\tools\clients\ClientTools;
 use app\models\Ads;
-use app\models\AdsSearch;
+use app\models\search\AdsSearch;
 use app\modules\v1\components\controller\BaseActiveController;
 use OpenApi\Annotations as OA;
+use yii\db\ActiveRecord;
 use yii\filters\AccessControl;
 use yii\rest\ActiveController;
+use yii\web\NotFoundHttpException;
 
 /**
  * @OA\\Info(
@@ -292,6 +295,7 @@ class AdsController extends BaseActiveController
     {
         $actions = parent::actions();
         unset($actions['index']);
+        unset($actions['create']);
         return $actions;
     }
 
@@ -299,12 +303,53 @@ class AdsController extends BaseActiveController
     {
         $searchModel = new AdsSearch();
         $params = \Yii::$app->request->queryParams;
-        /*if (!\Yii::$app->user->can(Permissions::VIEW_LIST_COMPANY)) {
-            $params['user_id'] = \Yii::$app->user->getId();
-        }*/
+        if(!empty($params) && array_key_exists('private-view', $params)) {
+            $params['filters']['client_id'] = ClientTools::getInstance()->getCurrentClientId();
+        }
         $data = $searchModel->search($params);
         return ['models' => $data->getModels(), 'count' => $data->getTotalCount()];
     }
 
+    public function actionCreate()
+    {
+
+        $this->checkIsPost();
+
+
+
+        /** @var ActiveRecord $model **/
+        $model = new $this->modelClass();
+        $data = \Yii::$app->request->post();
+        if ($model->load($data, '') && $model->save()) {
+            $this->saveCountries($model, $data['countries'] ?? '');
+            $this->saveKeys($model, $data['campaigns_keys']);
+            return $model;
+        } else {
+            \Yii::$app->response->statusCode = 400;
+            return $model;
+        }
+    }
+
+    public function actionUpdate($id)
+    {
+        /* @var $model ActiveRecord */
+        $model = $this->modelClass;
+
+        if ($model = $model::findOne($id)) {
+            $data = \Yii::$app->request->post();
+            if ($model->load($data, '')) {
+                if ($model->save()) {
+                    $this->saveCountries($model, $data['countries'] ?? '');
+                    $this->saveKeys($model, $data['campaigns_keys']);
+                    return $model;
+                } else {
+                    \Yii::$app->response->statusCode = 400;
+                    return $model;
+                }
+            }
+        } else {
+            throw new NotFoundHttpException('Not found');
+        }
+    }
 
 }

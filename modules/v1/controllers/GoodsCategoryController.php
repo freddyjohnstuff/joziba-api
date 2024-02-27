@@ -2,6 +2,7 @@
 
 namespace app\modules\v1\controllers;
 
+use app\lib\tools\media\MediaClass;
 use app\models\Ads;
 use app\models\AdsStatus;
 use app\models\GoodsCategory;
@@ -242,4 +243,46 @@ class GoodsCategoryController extends BaseActiveController
         ];
         return $behaviors;
     }
+
+    public function actions()
+    {
+        $action = parent::actions();
+        unset($action['index']);
+        return $action;
+    }
+
+
+    /**
+     * @return array|\yii\data\ActiveDataProvider|null
+     */
+    public function actionIndex()
+    {
+        return $this->getCategory(0);
+    }
+
+
+    /**
+     * @param $parentId
+     * @return array|null
+     */
+    private function getCategory($parentId) {
+        $allCategory = GoodsCategory::find()->where(['parent_id' => $parentId])->all();
+        if(!$allCategory) {
+            return null;
+        }
+
+        $result = [];
+        foreach ($allCategory  as $category) {
+            $_cur = $category->toArray();
+            if($_cur['parent_id'] == 0) {
+                $_cur['parent_id'] = null;
+            }
+            $_cur['children'] = $this->getCategory($category->id);
+            $_cur['media'] = MediaClass::getInstance()->getMediaList($category->id, 'category');
+
+            $result[] = $_cur;
+        }
+        return $result;
+    }
+
 }

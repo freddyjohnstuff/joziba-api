@@ -12,18 +12,15 @@ Main models(will be transforms to endpoints)
 ENTITY LIST
 -------------------
 
-      Ads                 main ad entity
-      AdsStatus           ad type
-      GoodsCategory       Good-Category
-      controllers/        contains Web controller classes
-      mail/               contains view files for e-mails
-      models/             contains model classes
-      runtime/            contains files generated during runtime
-      tests/              contains various tests for the basic application
-      vendor/             contains dependent 3rd-party packages
-      views/              contains view files for the Web application
-      web/                contains the entry script and Web resources
-
+      /ads                  main ad entity
+      /ads-status           ad type
+      /goods-category       Good-Category
+      /good-helpers         Good helpers
+      /good-helpers-value   Value of Good-helpers
+      /helper-type          Type of heprers
+      /media                Media resourse
+      /profile              Profile
+      /service-goods        connector for ads, category, goods
 
 
 SING UP
@@ -179,8 +176,9 @@ RESET PASSWORD
 Send post request to endpoint `/api/v1/reset` with email in payload
 
       POST /api/v1/reset
-      body:
-         email: mymail@domain.zone
+      
+body:
+     email: mymail@domain.zone
 
 
 response [success]:
@@ -223,6 +221,76 @@ response [error]
       {
          "message": "Profile not created"
       }
+
+Change profile data [name & phone]
+    
+    POST /api/v1/my-data
+
+body:
+
+    phone: +79775552202
+    name: Vladislav Popov
+
+response [success]
+
+     {
+          "message": "Updated data!"
+     }
+
+response [error]
+
+     {
+          "message": "Something went wrong"
+     }
+
+
+
+Create ADS
+------------
+
+     POST /api/v1/create-ads
+
+body:
+     
+     category_id:{number},
+     title:{string},
+     description:{sring}
+     helpers:[
+          {id:value}
+          ...
+     ]
+     expired [2,4,12]
+     images [
+          {file}
+          ...
+     ]
+
+
+response [success]
+
+     {
+          "message":"Ads created" 
+     }
+
+response [error]
+
+     {
+          
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -320,84 +388,51 @@ response [error]
 Category
 ---------
 
+      GET /api/v1/goods-category
 
-ADS Entity
-------------
-
-      GET /api/v1/ads
 params:
 
 filters:
 
       filters:
-         client_id:{number}
-         status_id:{number}
-         published:{boolean(true=1,false=0)}
-         title:{string for filtering by condition LIKE}
-         description:{string for filtering by condition LIKE}
-         start_date:
-         end_date:{publish_date beetwen this dates}
+         parent_id:{number}
+         fld_key:{string}
+         fld_label:{string}
 
 orders:
 
       sort:
          -id|id
-         -title|title
+         -fld_label|fld_label
 
 response [success]:
 
-      {
-         "models": [
+        [
             {
-               "id": 1,
-               "client_id": 1,
-               "status_id": 1,
-               "published": 0,
-               "title": "Goods of day!",
-               "description": "Plumb for gas metrics.",
-               "expired_date": "2024-03-09",
-               "publish_date": "2024-02-08",
-               "created_at": "2024-02-08 07:45:24",
-               "updated_at": null,
-               "expired_at": null
+                "id": 1,
+                "parent_id": 0,
+                "fld_key": "nedvizhimost",
+                "fld_label": "Недвижимость",
+                "fld_order": 0,
+                "fld_breadcrumb": "/nedvizhimost"
             },
-            {
-               "id": 2,
-               "client_id": 6,
-               "status_id": 1,
-               "published": 1,
-               "title": "Car at home Модгый",
-               "description": "валододл тлд то отолт олт от о то т от т о то от от о",
-               "expired_date": "2024-03-21",
-               "publish_date": "2024-02-21",
-               "created_at": "2024-02-21 09:57:03",
-               "updated_at": null,
-               "expired_at": null
-            }
-         ],
-         "count": 2
-      }
+        ]
 
 
 view one ads
 
-      GET /api/v1/ads/{id} 
+      GET /api/v1/goods-category/{id} 
 
 response [success]
 
-      {
-         "id": 1,
-         "client_id": 1,
-         "status_id": 1,
-         "published": 0,
-         "title": "Goods of day!",
-         "description": "Plumb for gas metrics.",
-         "expired_date": "2024-03-09",
-         "publish_date": "2024-02-08",
-         "created_at": "2024-02-08 07:45:24",
-         "updated_at": null,
-         "expired_at": null
-      }
+        {
+            "id": 1,
+            "parent_id": 0,
+            "fld_key": "nedvizhimost",
+            "fld_label": "Недвижимость",
+            "fld_order": 0,
+            "fld_breadcrumb": "/nedvizhimost"
+        }
 
 response [error]
 
@@ -408,5 +443,9 @@ response [error]
          "status": 404,
          "type": "yii\\web\\NotFoundHttpException"
       }
+
+
+
+
 
 

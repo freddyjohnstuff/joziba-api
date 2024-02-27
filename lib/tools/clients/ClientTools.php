@@ -71,6 +71,38 @@ final class ClientTools
     }
 
 
+    /**
+     * @return int|null
+     */
+    public function getCurrentClientId() {
+        $header = \Yii::$app->request->getHeaders()->toArray();
+        if(array_key_exists('authorization', $header) === false) {
+            return null;
+        }
+
+        $XApiKey = $header['authorization'][array_keys($header['authorization'])[0]];
+        if (preg_match('/^Bearer\s+(.*?)$/', $XApiKey, $matches)) {
+            $XApiKey = $matches[1];
+        }
+        $tokenHolder = ClientTokenHolder::find()
+            ->where(['access_token' => $XApiKey])
+            ->one();
+
+        if(!$tokenHolder) {
+            return null;
+        }
+
+        $client = Clients::findOne($tokenHolder->client_id);
+
+        if(!$client) {
+            return null;
+        }
+
+        return $client->id;
+    }
+
+
+
 
 
 
