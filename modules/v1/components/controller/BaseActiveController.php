@@ -30,7 +30,7 @@ use yii\rest\ActiveController;
  */
 class BaseActiveController extends ActiveController
 {
-    use ControllerActionsDefault;
+    /*use ControllerActionsDefault;*/
     public $enableCsrfValidation = false;
 
     public function behaviors()
@@ -80,10 +80,11 @@ class BaseActiveController extends ActiveController
     }
 
 
-
     public function checkIsPost() {
-
-
+        if (!\Yii::$app->request->isPost) {
+           $this->sendErrorCode(405);
+           return ['message' => 'Method Not Allowed'];
+        }
     }
 
     public function sendErrorCode($code = 200) {

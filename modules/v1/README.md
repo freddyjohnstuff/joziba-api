@@ -252,19 +252,19 @@ Create ADS
 
 body:
      
-     category_id:{number},
-     title:{string},
-     description:{sring}
+     category_id:{number, required},
+     title:{string, required},
+     description:{sring, required}
      helpers:{
           id:value,
           id:value,
           ...
-     }
-     expired [2,4,12]
+     } {optional}
+     expired [2,4,12] {number, required}
      images [
           {file}
           ...
-     ]
+     ] {optional}
 
 
 response [success]
@@ -280,8 +280,55 @@ response [success]
 response [error]
 
      {
-          
+          "message": "You skipped some fields"
      }
+
+
+
+UPDATE ADS
+------------
+     
+     PUT /api/v1/ads/{id}
+
+
+body: [required one of this fields]
+
+     category_id:{number, optional},
+     title:{string, optional},
+     description:{sring, optional}
+     helpers:{
+          id:value,
+          id:value,
+          ...
+     } {optional}
+     expired [2,4,12] {number, optional}
+     images [
+          {file}
+          ...
+     ] {optional}
+
+PS: for remove image(s) use different endpoint `/api/v1/media`
+
+
+response [success]
+
+          {
+               "message": "Ads updated",
+               "ads": 13,
+               "serviceGoods": 6,
+               "helperCreated": 0,
+               "uploadedMedia": 0
+          }
+
+
+response [error]
+
+     {
+          "message": "At least one parameter should be sent"
+     }
+
+
+
 
 
 
@@ -395,15 +442,6 @@ Category
 
       GET /api/v1/goods-category
 
-params:
-
-filters:
-
-      filters:
-         parent_id:{number}
-         fld_key:{string}
-         fld_label:{string}
-
 orders:
 
       sort:
@@ -451,6 +489,44 @@ response [error]
 
 
 
+Goods-Helper
+-----------
+
+     GET /api/v1/goods-helpers
+
+params:
+
+     category_id:{integer}
+     type_id:{integer}
+     fld_name:{string}
+
+orders:
+
+      sort:
+         -id|id
+         -fld_name|fld_name
 
 
+response: [success]
 
+     {
+          "models": [
+               {
+                    "id": 8,
+                    "category_id": 2,
+                    "type_id": 2,
+                    "fld_name": "square",
+                    "fld_label": "Плошадь",
+                    "fld_default": "0",
+                    "fld_parameters": null
+               },
+          ],
+          "count": 5
+     }
+
+
+reponse: [error]
+
+     {
+          "message": "Something went wrong"
+     }

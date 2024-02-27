@@ -5,6 +5,7 @@ namespace app\modules\v1\controllers;
 use app\models\Ads;
 use app\models\AdsStatus;
 use app\models\GoodsHelpers;
+use app\models\search\GoodsHelpersSearch;
 use app\modules\v1\components\controller\BaseActiveController;
 use OpenApi\Annotations as OA;
 use yii\filters\AccessControl;
@@ -276,5 +277,24 @@ class GoodsHelpersController extends BaseActiveController
             ],
         ];
         return $behaviors;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function actions()
+    {
+        $actions = parent::actions();
+        unset($actions['index']);
+        return $actions;
+    }
+
+    public function actionIndex(){
+
+        $searchModel = new GoodsHelpersSearch();
+        $params = \Yii::$app->request->queryParams;
+        $data = $searchModel->search($params);
+        return ['models' => $data->getModels(), 'count' => $data->getTotalCount()];
+
     }
 }

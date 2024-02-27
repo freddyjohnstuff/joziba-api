@@ -2,6 +2,7 @@
 
 namespace app\models\search;
 
+use app\modules\v1\constants\Api;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Ads;
@@ -50,6 +51,10 @@ class AdsSearch extends Ads
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => Api::PAGE_SIZE
+            ],
+
         ]);
 
         $this->load($params, 'filters');

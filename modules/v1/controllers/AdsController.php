@@ -14,7 +14,9 @@ use OpenApi\Annotations as OA;
 use yii\db\ActiveRecord;
 use yii\filters\AccessControl;
 use yii\rest\ActiveController;
+use yii\web\MultipartFormDataParser;
 use yii\web\NotFoundHttpException;
+use function PHPUnit\Framework\returnArgument;
 
 /**
  * @OA\\Info(
@@ -302,6 +304,7 @@ class AdsController extends BaseActiveController
         $actions = parent::actions();
         unset($actions['index']);
         unset($actions['create']);
+        unset($actions['update']);
         return $actions;
     }
 
@@ -415,23 +418,121 @@ class AdsController extends BaseActiveController
 
     public function actionUpdate($id)
     {
-        /* @var $model ActiveRecord */
-        $model = $this->modelClass;
 
-        if ($model = $model::findOne($id)) {
-            $data = \Yii::$app->request->post();
-            if ($model->load($data, '')) {
-                if ($model->save()) {
-                    $this->saveCountries($model, $data['countries'] ?? '');
-                    $this->saveKeys($model, $data['campaigns_keys']);
-                    return $model;
-                } else {
-                    \Yii::$app->response->statusCode = 400;
-                    return $model;
+        $header = \Yii::$app->request->headers->toArray();
+        $body = file_get_contents('php://input');
+        $parser = new MultipartFormDataParser();
+        $postData = $parser->parse($body,$header['content-type'][0] ?? '');
+
+        /*$this->checkIsPost();*/
+        $client_id =  ClientTools::getInstance()->getCurrentClientId();
+        $fields = [
+            'category_id',
+            'title',
+            'description',
+            'expired',
+            'helpers',
+            'images',
+            'helpers'
+        ];
+
+        $paramsCount = 0;
+        foreach ($fields as $field) {
+            if(isset($postData[$field])) {
+                $paramsCount++;
+            }
+        }
+
+        if($paramsCount == 0) {
+            $this->sendErrorCode(400);
+            return ['message' => 'At least one parameter should be sent'];
+        }
+
+        /* @var $model Ads */
+        $model = Ads::findOne($id);
+        if ($model) {
+
+            if ($model->client_id != $client_id) {
+                $this->sendErrorCode(401);
+                return ['message' => 'Unauthorised access'];
+            }
+
+            if(isset($postData['expired'])) {
+                $updatedDate = new \DateTime();
+                $_tmpDate = new \DateTime($updatedDate->format("Y-m-d H:i:s"));
+                $expiredDate = $_tmpDate->add(new \DateInterval(sprintf("P%dW", $postData['expired'])));
+
+                $model->updated_at = $updatedDate->format('Y-m-d H:i:s');
+                $model->expired_date = $expiredDate->format('Y-m-d H:i:s');
+            }
+
+            if(isset($postData['title'])) {
+                $model->title = $postData['title'];
+            }
+            if(isset($postData['description'])) {
+                $model->description = $postData['description'];
+            }
+
+            if(isset($postData['category_id'])) {
+                $serviceGoods = ServiceGoods::findOne($model->serviceGoods[0]->id);
+                $serviceGoods->category_id = $postData['category_id'];
+                $serviceGoodsSaved = $serviceGoods->validate() && $serviceGoods->save();
+            }
+
+            if(isset($_FILES['images'])) {
+                $uploadedImages = MediaClass::getInstance()->createMediaList($model->id);
+            }
+
+            $helpersCreated = 0;
+            if(!empty($postData['helpers'])) {
+
+                $helpers = GoodsHelpers::find()
+                    ->where(['category_id' => intval($postData['category_id'])])
+                    ->all();
+
+                if ($helpers) {
+                    foreach ($helpers as $helper) {
+                        if(isset($postData['helpers'][$helper->id])) {
+
+                            $existHlpr = GoodsHelpersValue::find()
+                                ->where([
+                                    'AND',
+                                    ['service_goods_id' => $model->serviceGoods[0]->id],
+                                    ['helper_id' => $helper->id]
+                                ])
+                                ->one();
+                            if($existHlpr) {
+                                $existHlpr->value = $postData['helpers'][$helper->id];
+                                if($existHlpr->validate() && $existHlpr->save()) {
+                                    $helpersCreated++;
+                                }
+                            } else {
+                                $goodsHelpersValue = new GoodsHelpersValue();
+                                $goodsHelpersValue->service_goods_id = $model->serviceGoods[0]->id;
+                                $goodsHelpersValue->helper_id = $helper->id;
+                                $goodsHelpersValue->value = $postData['helpers'][$helper->id];
+                                if($goodsHelpersValue->validate() && $goodsHelpersValue->save()) {
+                                    $helpersCreated++;
+                                }
+                            }
+                        }
+                    }
                 }
             }
+
+
+            return [
+                'message' => 'Ads updated',
+                'ads' => $model->id,
+                'serviceGoods' => $model->serviceGoods[0]->id,
+                'helperCreated' =>  $helpersCreated,
+                'uploadedMedia' =>  $uploadedImages ?? 0,
+            ];
+
+
         } else {
-            throw new NotFoundHttpException('Not found');
+            $this->sendErrorCode(404);
+            return ['message' => 'Entity not found'];
         }
     }
 
