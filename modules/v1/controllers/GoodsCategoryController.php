@@ -257,7 +257,35 @@ class GoodsCategoryController extends BaseActiveController
      */
     public function actionIndex()
     {
-        return $this->getCategory(0);
+        $params = \Yii::$app->request->get();
+        if(isset($params['path'])) {
+            return $this->getCategoryByPath($params['path']);
+        } else {
+            return $this->getCategory(0);
+        }
+    }
+
+
+    /**
+     * @param $path
+     * @return array|null
+     */
+    private function getCategoryByPath($path) {
+
+        if(empty($path)) {
+           return null;
+        }
+
+        $category = GoodsCategory::find()->where(['fld_breadcrumb' => $path])->one();
+        $categoryArr = $category->toArray();
+        if(!$category) {
+            return null;
+        }
+        if($category->parent_id > 0) {
+            $categoryArr['parents'] = [GoodsCategory::findOne($category->parent_id)];
+        }
+
+        return $categoryArr;
     }
 
 

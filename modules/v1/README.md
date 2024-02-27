@@ -441,6 +441,9 @@ Category
 ---------
 
       GET /api/v1/goods-category
+params:
+          
+     path:{string} for retrieve one node by path.
 
 orders:
 
