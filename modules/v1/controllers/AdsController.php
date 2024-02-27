@@ -3,8 +3,12 @@
 namespace app\modules\v1\controllers;
 
 use app\lib\tools\clients\ClientTools;
+use app\lib\tools\media\MediaClass;
 use app\models\Ads;
+use app\models\GoodsHelpers;
+use app\models\GoodsHelpersValue;
 use app\models\search\AdsSearch;
+use app\models\ServiceGoods;
 use app\modules\v1\components\controller\BaseActiveController;
 use OpenApi\Annotations as OA;
 use yii\db\ActiveRecord;
@@ -273,6 +277,8 @@ use yii\web\NotFoundHttpException;
  */
 class AdsController extends BaseActiveController
 {
+    const SERVICE_GOODS_TYPE = 1;
+
     public $modelClass = Ads::class;
 
     public function behaviors()
@@ -314,20 +320,97 @@ class AdsController extends BaseActiveController
     {
 
         $this->checkIsPost();
+        $client_id =  ClientTools::getInstance()->getCurrentClientId();
+        $postData = \Yii::$app->request->post();
 
-
-
-        /** @var ActiveRecord $model **/
-        $model = new $this->modelClass();
-        $data = \Yii::$app->request->post();
-        if ($model->load($data, '') && $model->save()) {
-            $this->saveCountries($model, $data['countries'] ?? '');
-            $this->saveKeys($model, $data['campaigns_keys']);
-            return $model;
-        } else {
-            \Yii::$app->response->statusCode = 400;
-            return $model;
+        if(!(
+            isset($postData['category_id']) &&
+            isset($postData['title']) &&
+            isset($postData['description']) &&
+            isset($postData['expired'])
+        )) {
+            $this->sendErrorCode(400);
+            return [
+                'message' => 'You skipped some fields'
+            ];
         }
+
+        $createdDate = new \DateTime();
+        $expiredAfter = (isset($postData['expired'])) ? $postData['expired'] : 4;
+        $_tmpDate = new \DateTime($createdDate->format("Y-m-d H:i:s"));
+        $expiredDate = $_tmpDate->add(new \DateInterval(sprintf("P%dW", $expiredAfter)));
+
+
+        $ads = new Ads();
+        $ads->load(
+            [
+                'ads' => [
+                    'client_id' => $client_id,
+                    'status_id' => 1 /* Embriyo */,
+                    'title' => $postData['title'],
+                    'description' => $postData['description'],
+                    'expired_date' => $expiredDate->format("Y-m-d H:i:s"),
+                    'publish_date' => $createdDate->format("Y-m-d H:i:s"),
+                ]
+            ],
+            'ads'
+        );
+        If (!($ads->validate() && $ads->save())) {
+            $this->sendErrorCode(500);
+            return [
+                'message' => 'Something went wrong',
+                'errors' => $ads->getErrors()
+
+            ];
+        }
+
+        $serviceGoods = new ServiceGoods();
+        $serviceGoods->category_id = intval($postData['category_id']);
+        $serviceGoods->type_id = self::SERVICE_GOODS_TYPE;
+        $serviceGoods->ads_id = $ads->id;
+
+        if(!($serviceGoods->validate() && $serviceGoods->save())) {
+            $this->sendErrorCode(500);
+            return [
+                'message' => 'Something went wrong',
+                'errors' => $serviceGoods->getErrors()
+            ];
+        }
+
+        $helpersCreated = 0;
+        if(!empty($postData['helpers'])) {
+
+            $helpers = GoodsHelpers::find()
+                ->where(['category_id' => intval($postData['category_id'])])
+                ->all();
+
+            if ($helpers) {
+                foreach ($helpers as $helper) {
+                    if(isset($postData['helpers'][$helper->id])) {
+
+                        $goodsHelpersValue = new GoodsHelpersValue();
+                        $goodsHelpersValue->service_goods_id = $serviceGoods->id;
+                        $goodsHelpersValue->helper_id = $helper->id;
+                        $goodsHelpersValue->value = $postData['helpers'][$helper->id];
+                        if($goodsHelpersValue->validate() && $goodsHelpersValue->save()) {
+                            $helpersCreated++;
+                        }
+                    }
+                }
+            }
+        }
+
+        if(isset($postData['images'])) {
+            $uploadedImages = MediaClass::getInstance()->createMediaList($ads->id);
+        }
+        return [
+            'message' => 'Ads created',
+            'ads' => $ads->id,
+            'serviceGoods' => $serviceGoods->id,
+            'helperCreated' =>  $helpersCreated,
+            'uploadedMedia' =>  $uploadedImages ?? 0,
+        ];
+
     }
 
     public function actionUpdate($id)

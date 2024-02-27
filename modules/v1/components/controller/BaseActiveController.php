@@ -85,4 +85,8 @@ class BaseActiveController extends ActiveController
 
 
     }
+
+    public function sendErrorCode($code = 200) {
+        \Yii::$app->response->statusCode = $code;
+    }
 }

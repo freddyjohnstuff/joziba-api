@@ -255,10 +255,11 @@ body:
      category_id:{number},
      title:{string},
      description:{sring}
-     helpers:[
-          {id:value}
+     helpers:{
+          id:value,
+          id:value,
           ...
-     ]
+     }
      expired [2,4,12]
      images [
           {file}
@@ -269,7 +270,11 @@ body:
 response [success]
 
      {
-          "message":"Ads created" 
+         "message": "Ads created",
+         "ads": 11,
+         "serviceGoods": 5,
+         "helperCreated": 3,
+         "uploadedMedia": 1
      }
 
 response [error]

@@ -3,14 +3,6 @@
 namespace app\models;
 
 use Yii;
-/*
- * @OA\\Info(
- *      version="1.0.0",
- *      title="API Documentation",
- *      description="Description removed for better illustration of structure.",
- * )
- */
-
 
 /**
  * This is the model class for table "goods_helpers_value".
@@ -39,10 +31,9 @@ class GoodsHelpersValue extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'service_goods_id', 'helper_id'], 'required'],
-            [['id', 'service_goods_id', 'helper_id'], 'integer'],
+            [['service_goods_id', 'helper_id'], 'required'],
+            [['service_goods_id', 'helper_id'], 'integer'],
             [['value'], 'string', 'max' => 255],
-            [['id'], 'unique'],
             [['helper_id'], 'exist', 'skipOnError' => true, 'targetClass' => GoodsHelpers::class, 'targetAttribute' => ['helper_id' => 'id']],
             [['service_goods_id'], 'exist', 'skipOnError' => true, 'targetClass' => ServiceGoods::class, 'targetAttribute' => ['service_goods_id' => 'id']],
         ];

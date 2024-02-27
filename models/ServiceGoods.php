@@ -4,15 +4,6 @@ namespace app\models;
 
 use Yii;
 
-/*
- * @OA\\Info(
- *      version="1.0.0",
- *      title="API Documentation",
- *      description="Description removed for better illustration of structure.",
- * )
- */
-
-
 /**
  * This is the model class for table "service_goods".
  *
@@ -41,9 +32,8 @@ class ServiceGoods extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'category_id', 'type_id', 'ads_id'], 'required'],
-            [['id', 'category_id', 'type_id', 'ads_id'], 'integer'],
-            [['id'], 'unique'],
+            [['category_id', 'type_id', 'ads_id'], 'required'],
+            [['category_id', 'type_id', 'ads_id'], 'integer'],
             [['ads_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ads::class, 'targetAttribute' => ['ads_id' => 'id']],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => GoodsCategory::class, 'targetAttribute' => ['category_id' => 'id']],
         ];
