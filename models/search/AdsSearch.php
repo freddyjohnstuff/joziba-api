@@ -54,7 +54,8 @@ class AdsSearch extends Ads
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSizeLimit' => [1,1000]
+                'pageSizeLimit' => API::PAGE_SIZE_LIMIT,
+                'defaultPageSize' => API::PAGE_SIZE
             ],
         ]);
 
