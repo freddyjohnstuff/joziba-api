@@ -316,7 +316,7 @@ class AdsController extends BaseActiveController
             $params['filters']['client_id'] = ClientTools::getInstance()->getCurrentClientId();
         }
         $data = $searchModel->search($params);
-        return ['models' => $data->getModels(), 'count' => $data->getTotalCount()];
+        return ['models' => $data->getModels(), 'count' => $data->getTotalCount(), 'pages' => $data->pagination->links];
     }
 
     public function actionCreate()

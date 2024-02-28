@@ -45,16 +45,17 @@ class AdsSearch extends Ads
      */
     public function search($params)
     {
+        //todo: set a status = published in non private page
         $query = Ads::find();
 
         // add conditions that should always apply here
+        $count = $query->count();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => Api::PAGE_SIZE
+                'pageSizeLimit' => [1,1000]
             ],
-
         ]);
 
         $this->load($params, 'filters');
