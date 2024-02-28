@@ -294,7 +294,41 @@ class GoodsHelpersController extends BaseActiveController
         $searchModel = new GoodsHelpersSearch();
         $params = \Yii::$app->request->queryParams;
         $data = $searchModel->search($params);
-        return ['models' => $data->getModels(), 'count' => $data->getTotalCount()];
 
+        $models = $data->getModels();
+
+        /** @var GoodsHelpers $model */
+        foreach ($models as $model) {
+            if($model->fld_parameters != null) {
+                $model->fld_parameters = json_decode($model->fld_parameters);
+            }
+        }
+        return ['models' => $models, 'count' => $data->getTotalCount()];
     }
+
+
+    /**
+     * @param $parentId
+     * @return array|null
+     */
+    private function getHelper($parentId) {
+        $allCategory = GoodsHelpers::find()->where(['parent_id' => $parentId])->all();
+        if(!$allCategory) {
+            return null;
+        }
+
+        $result = [];
+        foreach ($allCategory  as $category) {
+            $_cur = $category->toArray();
+            if($_cur['parent_id'] == 0) {
+                $_cur['parent_id'] = null;
+            }
+            $_cur['children'] = $this->getCategory($category->id);
+            $_cur['media'] = MediaClass::getInstance()->getMediaList($category->id, 'category');
+
+            $result[] = $_cur;
+        }
+        return $result;
+    }
+
 }

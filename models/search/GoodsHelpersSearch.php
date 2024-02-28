@@ -46,6 +46,7 @@ class GoodsHelpersSearch extends GoodsHelpers
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => false
         ]);
 
         $this->load($params, '');

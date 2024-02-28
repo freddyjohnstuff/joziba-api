@@ -13,7 +13,7 @@ class m240227_094653_seed_goods_helpers extends Migration
     public function safeUp()
     {
 
-        $autoBrand = json_encode([
+        $autoBrand = [
             'toyota'=>'Toyota',
             'mercedes-benz'=>'Mercedes-Benz',
             'bmw'=>'BMW',
@@ -23,9 +23,9 @@ class m240227_094653_seed_goods_helpers extends Migration
             'kia'=>'Kia',
             'honda'=>'Honda',
             'subaru'=>'Subaru',
-        ]);
+        ];
 
-        $autoModel = json_encode([
+        $autoModel = [
             'toyota'=>[
                 'camry' => 'Camry',
                 'corolla' => 'Corolla',
@@ -102,15 +102,61 @@ class m240227_094653_seed_goods_helpers extends Migration
                 'outback' => 'Outback',
                 'justy' => 'Justy',
             ],
-        ]);
+        ];
 
-        $jobType = json_encode([
-            'full-time' => 'Полная занятость',
-            'part-time' => 'Частичная занятость',
-            'project' => 'Проектная работа',
-            'volunteering' => 'Волонтерство',
-            'internship' => 'Стажировка',
-        ]);
+
+        $newBrand = [];
+        foreach ($autoBrand as $key => $value) {
+            $newBrand[] = [
+                'label' => $value,
+                'value' => $key,
+            ];
+        }
+
+        $newSubBrand = [];
+        foreach ($autoBrand as $key => $brand) {
+            $children = [];
+            if(isset($autoModel[$key])) {
+                foreach ($autoModel[$key] as $_key => $_value) {
+                    $_model = [
+                        'label' => $_value,
+                        'value' => $_key,
+                    ];
+                    $children[] = $_model;
+                }
+            }
+
+            $_brand = [
+                'label' => $brand,
+                'value' => $key,
+                'children' => $children,
+            ];
+            $newSubBrand[] = $_brand;
+        }
+
+
+        $jobType = [
+            [
+                'label' => 'full-time',
+                'value' => 'Полная занятость',
+            ],
+            [
+                'label' => 'part-time',
+                'value' => 'Частичная занятость',
+            ],
+            [
+                'label' => 'project',
+                'value' => 'Проектная работа',
+            ],
+            [
+                'label' => 'volunteering',
+                'value' => 'Волонтерство',
+            ],
+            [
+                'label' => 'internship',
+                'value' => 'Стажировка',
+            ],
+        ];
 
         $data = [
 
@@ -119,17 +165,17 @@ class m240227_094653_seed_goods_helpers extends Migration
             [3, 1, 2, 'square','Плошадь', '0', null],
 
             [4, 2, 2, 'price','Цена', '0', null],
-            [5, 2, 3, 'brand','Бренд', '0', $autoBrand],
-            [6, 2, 3, 'model','Модель', '0', $autoModel],
+            [5, 2, 3, 'brand','Бренд', '0', json_encode($newBrand)],
+            [6, 2, 3, 'model','Модель', '0', json_encode($newSubBrand)],
             [7, 2, 2, 'square','Обьем двигателя', '0', null],
             [8, 2, 2, 'square','Плошадь', '0', null],
 
             [9, 11, 2, 'salary','Зарплата', '0', null],
-            [10, 11, 3, 'job-type','Тип занятости', '0', $jobType],
+            [10, 11, 3, 'job-type','Тип занятости', '0', json_encode($jobType)],
             [11, 11, 2, 'experience','Опыт работы', '0', null],
 
             [12, 12, 2, 'salary','Зарплата', '0', null],
-            [13, 12, 3, 'job-type','Тип занятости', '0', $jobType],
+            [13, 12, 3, 'job-type','Тип занятости', '0', json_encode($jobType)],
             [14, 12, 2, 'experience','Опыт работы', '0', null],
             [15, 12, 2, 'age','Возраст', '0', null],
 
