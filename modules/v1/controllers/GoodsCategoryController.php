@@ -259,7 +259,11 @@ class GoodsCategoryController extends BaseActiveController
     {
         $params = \Yii::$app->request->get();
         if(isset($params['path'])) {
-            return $this->getCategoryByPath($params['path']);
+            $category =  $this->getCategoryByPath($params['path']);
+            $category['children'] = $this->getCategory($category['id']);
+            $category['media'] = MediaClass::getInstance()->getMediaList($category['id'], 'category');
+            return $category;
+
         } else {
             return $this->getCategory(0);
         }
