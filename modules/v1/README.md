@@ -248,7 +248,7 @@ response [error]
 Create ADS
 ------------
 
-     POST /api/v1/create-ads
+     POST /api/v1/ads
 
 body:
      
