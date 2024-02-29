@@ -368,7 +368,7 @@ class AdsController extends BaseActiveController
             'ads'
         );
         If (!($ads->validate() && $ads->save())) {
-            $this->sendErrorCode(500);
+            $this->sendErrorCode(400);
             return [
                 'message' => 'Something went wrong',
                 'errors' => $ads->getErrors()
@@ -382,7 +382,7 @@ class AdsController extends BaseActiveController
         $serviceGoods->ads_id = $ads->id;
 
         if(!($serviceGoods->validate() && $serviceGoods->save())) {
-            $this->sendErrorCode(500);
+            $this->sendErrorCode(400);
             return [
                 'message' => 'Something went wrong',
                 'errors' => $serviceGoods->getErrors()
