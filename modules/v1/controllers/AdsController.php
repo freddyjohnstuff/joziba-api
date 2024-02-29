@@ -322,7 +322,6 @@ class AdsController extends BaseActiveController
             foreach ($models as $model) {
                 $_model = $model->toArray();
                 $_model['media'] = MediaClass::getInstance()->getMediaList($model->id, 'ads');
-                unset($_model['media']['media_path']);
                 $newModels[] = $_model;
             }
         }
