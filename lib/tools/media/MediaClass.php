@@ -34,8 +34,17 @@ final class MediaClass
 
     public function getMediaList($id, $entity = 'ads') {
 
+        /**
+         *  * @property int $id
+         * @property string|null $target_entity ads,category,client
+         * @property int|null $target_id
+         * @property string|null $media_url
+         * @property string|null $media_path
+         * @property string|null $created_at
+         * @property int $client_id
+         */
         $media = Media::find()
-            ->select(['media_url'])
+            ->select(['id', 'target_entity', 'target_id', 'media_url'])
             ->where([
                 'AND',
                 ['target_entity' => $entity],

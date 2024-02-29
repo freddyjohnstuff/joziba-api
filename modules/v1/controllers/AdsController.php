@@ -316,7 +316,17 @@ class AdsController extends BaseActiveController
             $params['filters']['client_id'] = ClientTools::getInstance()->getCurrentClientId();
         }
         $data = $searchModel->search($params);
-        return ['models' => $data->getModels(), 'count' => $data->getTotalCount(), 'pages' => $data->pagination->links];
+        $models = $data->getModels();
+        $newModels = [];
+        if(!empty($models)) {
+            foreach ($models as $model) {
+                $_model = $model->toArray();
+                $_model['media'] = MediaClass::getInstance()->getMediaList($model->id, 'ads');
+                unset($_model['media']['media_path']);
+                $newModels[] = $_model;
+            }
+        }
+        return ['models' => $newModels, 'count' => $data->getTotalCount(), 'pages' => $data->pagination->links];
     }
 
     public function actionCreate()
