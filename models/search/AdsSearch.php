@@ -2,6 +2,7 @@
 
 namespace app\models\search;
 
+use app\models\ServiceGoods;
 use app\modules\v1\constants\Api;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -46,10 +47,9 @@ class AdsSearch extends Ads
     public function search($params)
     {
         //todo: set a status = published in non private page
-        $query = Ads::find();
+        $query = Ads::find()
+            ->innerJoin(ServiceGoods::tableName(), self::tableName() . '.id = ' . ServiceGoods::tableName() . '.ads_id');
 
-        // add conditions that should always apply here
-        $count = $query->count();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -69,30 +69,35 @@ class AdsSearch extends Ads
 
         $dataProvider->setSort([
             'defaultOrder' => [
-                'id' => SORT_DESC,
+                Ads::tableName() . '.id' => SORT_DESC,
             ],
             'attributes' => [
-                'title',
-                'id',
-                'publish_date',
-                'client_id',
+                Ads::tableName().'.title',
+                Ads::tableName().'.id',
+                Ads::tableName().'.publish_date',
+                Ads::tableName().'.client_id',
             ],
         ]);
 
         // grid filtering conditions
         $query
-            ->andFilterWhere(['in', 'client_id', $this->client_id])
-            ->andFilterWhere(['in', 'status_id', $this->status_id])
-            ->andFilterWhere(['=', 'published', $this->published])
-            ->andFilterWhere(['>=', 'publish_date', $this->start_date])
-            ->andFilterWhere(['<=', 'publish_date', $this->end_date]);
+            ->andFilterWhere(['in', Ads::tableName().'.client_id', $this->client_id])
+            ->andFilterWhere(['in', Ads::tableName().'.status_id', $this->status_id])
+            ->andFilterWhere(['=', Ads::tableName().'.published', $this->published])
+            ->andFilterWhere(['>=', Ads::tableName().'.publish_date', $this->start_date])
+            ->andFilterWhere(['<=', Ads::tableName().'.publish_date', $this->end_date]);
 
         $query->andFilterWhere([
-            'id' => $this->id,
+            Ads::tableName().'.id' => $this->id,
         ]);
 
-        $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'description', $this->description]);
+
+        $query->andFilterWhere(['like', Ads::tableName().'.title', $this->title])
+            ->andFilterWhere(['like', Ads::tableName().'.description', $this->description]);
+
+        if (isset($params['filters']['category_id'])) {
+            $query->andFilterWhere(['in', ServiceGoods::tableName() . '.id', $params['filters']['category_id']]);
+        }
 
         return $dataProvider;
     }
