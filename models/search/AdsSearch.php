@@ -96,7 +96,7 @@ class AdsSearch extends Ads
             ->andFilterWhere(['like', Ads::tableName().'.description', $this->description]);
 
         if (isset($params['filters']['category_id'])) {
-            $query->andFilterWhere(['in', ServiceGoods::tableName() . '.id', $params['filters']['category_id']]);
+            $query->andFilterWhere(['in', ServiceGoods::tableName() . '.category_id', $params['filters']['category_id']]);
         }
 
         return $dataProvider;
