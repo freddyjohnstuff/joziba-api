@@ -323,8 +323,8 @@ class AdsController extends BaseActiveController
             foreach ($models as $model) {
                 $_model = $model->toArray();
                 $_model['media'] = MediaClass::getInstance()->getMediaList($model->id, 'ads');
-                $_model['category'] = $model->serviceGoods[0]->category;
-                $_model['helpers'] = $model->serviceGoods[0]->getGoodsHelpersValuesWithLabels();
+                $_model['category'] = (!empty($model->serviceGoods)) ? $model->serviceGoods[0]->category : null;
+                $_model['helpers'] = (!empty($model->serviceGoods)) ? $model->serviceGoods[0]->getGoodsHelpersValuesWithLabels() : null;
                 $newModels[] = $_model;
             }
         }
@@ -339,13 +339,10 @@ class AdsController extends BaseActiveController
             $this->sendErrorCode(400);
             return ['message' => 'Entity not found'];
         }
-
         $_model = $model->toArray();
         $_model['media'] = MediaClass::getInstance()->getMediaList($model->id, 'ads');
-        $_model['category'] = $model->serviceGoods[0]->category;
-        $_model['helpers'] = $model->serviceGoods[0]->getGoodsHelpersValuesWithLabels();
-
-
+        $_model['category'] = (!empty($model->serviceGoods)) ? $model->serviceGoods[0]->category : null;
+        $_model['helpers'] = (!empty($model->serviceGoods)) ? $model->serviceGoods[0]->getGoodsHelpersValuesWithLabels() : null;
         return $_model;
     }
 
