@@ -135,7 +135,7 @@ class SignInForm extends Model
         $tokens = new ClientTokenHolder();
         $tokens->client_id = $user->id;
         $tokens->access_token = sha1($user->email . $user->phone . time());
-        $tokens->access_token_expired = time() + 1200;
+        $tokens->access_token_expired = time() + 24 * 3600;
         $tokens->refresh_token = sha1(md5($user->email . $user->phone . time() . rand(0,999)));
         $tokens->refresh_token_expired = time() + 24 * 3600;
         $tokens->save();
@@ -148,7 +148,7 @@ class SignInForm extends Model
      */
     private function prolongClientTokens($clientTokens) {
         return ClientTokenHolder::updateAll(
-            ['access_token_expired' => time() + 1200,
+            ['access_token_expired' => time() + 24 * 3600,
                 'refresh_token_expired' => time() + 24 * 3600],
             ['id' => $clientTokens->id]
         );
