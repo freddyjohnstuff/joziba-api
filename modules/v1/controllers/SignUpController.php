@@ -83,7 +83,7 @@ class SignUpController extends BaseController
                     $_allError[$key] = $_error[0];
                 }
             }
-            return ['request' => $_allError];
+            return ['errors' => $_allError];
         }
     }
 

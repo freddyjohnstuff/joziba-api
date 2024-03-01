@@ -340,7 +340,10 @@ class AdsController extends BaseActiveController
 
     public function actionView($id)
     {
-        $model = Ads::findOne($id)->where(Ads::tableName() . '.status_id!=6');
+        $model = Ads::find()
+                ->where(Ads::tableName() . '.status_id!=6')
+                ->andWhere(['id' => $id])
+                ->one();
         if(!$model)
         {
             $this->sendErrorCode(400);
