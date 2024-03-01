@@ -90,6 +90,7 @@ class ServiceGoods extends \yii\db\ActiveRecord
         foreach ($list as $item) {
             $_item = $item->toArray();
             $_item['helper_name'] = $item->helper;
+            unset($_item['helper_name']['fld_parameters']);
             $_list[] = $_item;
         }
 
