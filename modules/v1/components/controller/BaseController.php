@@ -30,8 +30,7 @@ use yii\web\Request;
  */
 class BaseController extends \yii\rest\Controller
 {
-/*    use ControllerActionsDefault;*/
-
+    use ControllerActionsDefault;
     public $enableCsrfValidation = false;
     public function behaviors()
     {
@@ -56,55 +55,5 @@ class BaseController extends \yii\rest\Controller
             ]
         ];
         return $behaviors;
-    }
-
-    public function beforeAction($action)
-    {
-        header("Access-Control-Allow-Origin: * ");
-        header("Access-Control-Allow-Credentials: true ");
-        header("Access-Control-Allow-Methods: " . implode(',', ['','GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']));
-
-        // Access-Control headers are received during OPTIONS requests
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-            header("Access-Control-Allow-Headers: " . implode(',', ['Origin', 'X-Requested-With', 'Accept', 'Authorization']));
-            \Yii::$app->end();
-        }
-
-        return parent::beforeAction($action);
-    }
-
-    public function returnWithError($message, $code = 400) {
-        \Yii::$app->response->statusCode = $code;
-        return [
-            'message' => $message,
-        ];
-    }
-
-    public function returnSuccess($scope, $code  = 200) {
-        \Yii::$app->response->statusCode = $code;
-        return [
-            'code' => $code,
-            'data' => $scope,
-            'request' => $this->retrieveRequestBody(\Yii::$app->request)
-        ];
-    }
-
-    /**
-     * @param Request $request
-     * @return void
-     */
-    private function retrieveRequestBody($request) {
-        switch ($request->method) {
-            case 'DELETE':
-            case 'GET':
-                return $request->get();
-                break;
-            case 'PUT':
-            case 'UPDATE':
-            case 'POST':
-                return $request->post();
-                break;
-        }
-        return null;
     }
 }

@@ -23,6 +23,7 @@ return [
                 'v1/profile',
                 'v1/service-goods',
                 'v1/my-data',
+                'v1/cities',
                 'v1/media'
             ],
             'prefix' => 'api',

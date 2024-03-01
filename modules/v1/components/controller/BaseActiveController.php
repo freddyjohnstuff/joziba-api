@@ -30,7 +30,7 @@ use yii\rest\ActiveController;
  */
 class BaseActiveController extends ActiveController
 {
-    /*use ControllerActionsDefault;*/
+    use ControllerActionsDefault;
     public $enableCsrfValidation = false;
 
     public function behaviors()
@@ -62,32 +62,4 @@ class BaseActiveController extends ActiveController
         return $behaviors;
     }
 
-
-    public function beforeAction($action)
-    {
-
-        header("Access-Control-Allow-Origin: * ");
-        header("Access-Control-Allow-Credentials: true ");
-        header("Access-Control-Allow-Methods: " . implode(',', ['','GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']));
-
-        // Access-Control headers are received during OPTIONS requests
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-            header("Access-Control-Allow-Headers: " . implode(',', ['Origin', 'X-Requested-With', 'Accept', 'Authorization']));
-            Yii::$app->end();
-        }
-
-        return parent::beforeAction($action);
-    }
-
-
-    public function checkIsPost() {
-        if (!\Yii::$app->request->isPost) {
-           $this->sendErrorCode(405);
-           return ['message' => 'Method Not Allowed'];
-        }
-    }
-
-    public function sendErrorCode($code = 200) {
-        \Yii::$app->response->statusCode = $code;
-    }
 }

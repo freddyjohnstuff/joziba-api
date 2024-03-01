@@ -358,6 +358,7 @@ params:
 filters:
 
       filters:
+         category_id:{number}
          client_id:{number}
          status_id:{number}
          published:{boolean(true=1,false=0)}
