@@ -50,7 +50,8 @@ class AdsSearch extends Ads
         //todo: set a status = published in non private page
         $query = Ads::find()
             ->innerJoin(ServiceGoods::tableName(), self::tableName() . '.id = ' . ServiceGoods::tableName() . '.ads_id');
-
+        //Removed ads
+        $query->where(Ads::tableName() . '.status_id!=6');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -80,10 +81,16 @@ class AdsSearch extends Ads
             ],
         ]);
 
+        if(isset($params['filters']['client_id']) && !empty($params['filters']['client_id'])) {
+            $query
+                ->andFilterWhere(['in', Ads::tableName().'.client_id', $this->client_id])
+                ->andFilterWhere(['in', Ads::tableName().'.status_id', [1,2,3,4,5]]);
+        } else {
+            $query->andFilterWhere(['in', Ads::tableName().'.status_id', [2]]);
+        }
+
         // grid filtering conditions
         $query
-            ->andFilterWhere(['in', Ads::tableName().'.client_id', $this->client_id])
-            ->andFilterWhere(['in', Ads::tableName().'.status_id', $this->status_id])
             ->andFilterWhere(['=', Ads::tableName().'.published', $this->published])
             ->andFilterWhere(['>=', Ads::tableName().'.publish_date', $this->start_date])
             ->andFilterWhere(['<=', Ads::tableName().'.publish_date', $this->end_date]);

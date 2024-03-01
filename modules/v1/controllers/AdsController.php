@@ -313,8 +313,15 @@ class AdsController extends BaseActiveController
     {
         $searchModel = new AdsSearch();
         $params = \Yii::$app->request->queryParams;
+        unset($params['filters']['client_id']);
         if (!empty($params) && array_key_exists('private-view', $params)) {
-            $params['filters']['client_id'] = ClientTools::getInstance()->getCurrentClientId();
+
+            $client_id = ClientTools::getInstance()->getCurrentClientId();
+            if(!$client_id) {
+                $this->sendErrorCode(400);
+                return ['message' => 'Unauthorised access'];
+            }
+            $params['filters']['client_id'] = $client_id;
         }
         $data = $searchModel->search($params);
         $models = $data->getModels();
@@ -333,7 +340,7 @@ class AdsController extends BaseActiveController
 
     public function actionView($id)
     {
-        $model = Ads::findOne($id);
+        $model = Ads::findOne($id)->where(Ads::tableName() . '.status_id!=6');
         if(!$model)
         {
             $this->sendErrorCode(400);
@@ -560,7 +567,7 @@ class AdsController extends BaseActiveController
     }
 
 
-    public function deleteAction($id)
+    public function actionDelete($id)
     {
         $ads = Ads::findOne($id);
         if(!$ads) {
