@@ -312,13 +312,13 @@ class AdsController extends BaseActiveController
     {
         $searchModel = new AdsSearch();
         $params = \Yii::$app->request->queryParams;
-        if(!empty($params) && array_key_exists('private-view', $params)) {
+        if (!empty($params) && array_key_exists('private-view', $params)) {
             $params['filters']['client_id'] = ClientTools::getInstance()->getCurrentClientId();
         }
         $data = $searchModel->search($params);
         $models = $data->getModels();
         $newModels = [];
-        if(!empty($models)) {
+        if (!empty($models)) {
             foreach ($models as $model) {
                 $_model = $model->toArray();
                 $_model['media'] = MediaClass::getInstance()->getMediaList($model->id, 'ads');
@@ -334,10 +334,10 @@ class AdsController extends BaseActiveController
     {
 
         $this->checkIsPost();
-        $client_id =  ClientTools::getInstance()->getCurrentClientId();
+        $client_id = ClientTools::getInstance()->getCurrentClientId();
         $postData = \Yii::$app->request->post();
 
-        if(!(
+        if (!(
             isset($postData['category_id']) &&
             isset($postData['title']) &&
             isset($postData['description']) &&
@@ -369,12 +369,11 @@ class AdsController extends BaseActiveController
             ],
             'ads'
         );
-        If (!($ads->validate() && $ads->save())) {
+        if (!($ads->validate() && $ads->save())) {
             $this->sendErrorCode(400);
             return [
                 'message' => 'Something went wrong',
                 'errors' => $ads->getErrors()
-
             ];
         }
 
@@ -383,7 +382,7 @@ class AdsController extends BaseActiveController
         $serviceGoods->type_id = self::SERVICE_GOODS_TYPE;
         $serviceGoods->ads_id = $ads->id;
 
-        if(!($serviceGoods->validate() && $serviceGoods->save())) {
+        if (!($serviceGoods->validate() && $serviceGoods->save())) {
             $this->sendErrorCode(400);
             return [
                 'message' => 'Something went wrong',
@@ -392,7 +391,7 @@ class AdsController extends BaseActiveController
         }
 
         $helpersCreated = 0;
-        if(!empty($postData['helpers'])) {
+        if (!empty($postData['helpers'])) {
 
             $helpers = GoodsHelpers::find()
                 ->where(['category_id' => intval($postData['category_id'])])
@@ -400,13 +399,13 @@ class AdsController extends BaseActiveController
 
             if ($helpers) {
                 foreach ($helpers as $helper) {
-                    if(isset($postData['helpers'][$helper->fld_name])) {
+                    if (isset($postData['helpers'][$helper->fld_name])) {
 
                         $goodsHelpersValue = new GoodsHelpersValue();
                         $goodsHelpersValue->service_goods_id = $serviceGoods->id;
                         $goodsHelpersValue->helper_id = $helper->id;
                         $goodsHelpersValue->value = $postData['helpers'][$helper->fld_name];
-                        if($goodsHelpersValue->validate() && $goodsHelpersValue->save()) {
+                        if ($goodsHelpersValue->validate() && $goodsHelpersValue->save()) {
                             $helpersCreated++;
                         }
                     }
@@ -414,15 +413,15 @@ class AdsController extends BaseActiveController
             }
         }
 
-        if(isset($postData['images'])) {
+        if (isset($_FILES['images'])) {
             $uploadedImages = MediaClass::getInstance()->createMediaList($ads->id);
         }
         return [
             'message' => 'Ads created',
             'ads' => $ads->id,
             'serviceGoods' => $serviceGoods->id,
-            'helperCreated' =>  $helpersCreated,
-            'uploadedMedia' =>  $uploadedImages ?? 0,
+            'helperCreated' => $helpersCreated,
+            'uploadedMedia' => $uploadedImages ?? 0,
         ];
 
     }
@@ -433,10 +432,10 @@ class AdsController extends BaseActiveController
         $header = \Yii::$app->request->headers->toArray();
         $body = file_get_contents('php://input');
         $parser = new MultipartFormDataParser();
-        $postData = $parser->parse($body,$header['content-type'][0] ?? '');
+        $postData = $parser->parse($body, $header['content-type'][0] ?? '');
 
         /*$this->checkIsPost();*/
-        $client_id =  ClientTools::getInstance()->getCurrentClientId();
+        $client_id = ClientTools::getInstance()->getCurrentClientId();
         $fields = [
             'category_id',
             'title',
@@ -449,12 +448,12 @@ class AdsController extends BaseActiveController
 
         $paramsCount = 0;
         foreach ($fields as $field) {
-            if(isset($postData[$field])) {
+            if (isset($postData[$field])) {
                 $paramsCount++;
             }
         }
 
-        if($paramsCount == 0) {
+        if ($paramsCount == 0) {
             $this->sendErrorCode(400);
             return ['message' => 'At least one parameter should be sent'];
         }
@@ -468,34 +467,33 @@ class AdsController extends BaseActiveController
                 return ['message' => 'Unauthorised access'];
             }
 
-            if(isset($postData['expired'])) {
-                $updatedDate = new \DateTime();
-                $_tmpDate = new \DateTime($updatedDate->format("Y-m-d H:i:s"));
-                $expiredDate = $_tmpDate->add(new \DateInterval(sprintf("P%dW", $postData['expired'])));
-
-                $model->updated_at = $updatedDate->format('Y-m-d H:i:s');
-                $model->expired_date = $expiredDate->format('Y-m-d H:i:s');
+            if (isset($postData['expired_date'])) {
+                $updatedDate = new \DateTime($postData['expired_date']);
+                $model->expired_date = $updatedDate->format('Y-m-d H:i:s');
             }
 
-            if(isset($postData['title'])) {
+            if (isset($postData['title'])) {
                 $model->title = $postData['title'];
             }
-            if(isset($postData['description'])) {
+            if (isset($postData['description'])) {
                 $model->description = $postData['description'];
             }
 
-            if(isset($postData['category_id'])) {
+            if (isset($postData['category_id'])) {
                 $serviceGoods = ServiceGoods::findOne($model->serviceGoods[0]->id);
                 $serviceGoods->category_id = $postData['category_id'];
                 $serviceGoodsSaved = $serviceGoods->validate() && $serviceGoods->save();
             }
 
-            if(isset($_FILES['images'])) {
+            if (isset($_FILES['images'])) {
                 $uploadedImages = MediaClass::getInstance()->createMediaList($model->id);
             }
 
+            $updatedSystemDate = new \DateTime();
+            $model->updated_at = $updatedSystemDate->format('Y-m-d H:i:s');
+
             $helpersCreated = 0;
-            if(!empty($postData['helpers'])) {
+            if (!empty($postData['helpers'])) {
 
                 $helpers = GoodsHelpers::find()
                     ->where(['category_id' => intval($postData['category_id'])])
@@ -503,7 +501,7 @@ class AdsController extends BaseActiveController
 
                 if ($helpers) {
                     foreach ($helpers as $helper) {
-                        if(isset($postData['helpers'][$helper->fld_name])) {
+                        if (isset($postData['helpers'][$helper->fld_name])) {
 
                             $existHlpr = GoodsHelpersValue::find()
                                 ->where([
@@ -512,9 +510,9 @@ class AdsController extends BaseActiveController
                                     ['helper_id' => $helper->id]
                                 ])
                                 ->one();
-                            if($existHlpr) {
+                            if ($existHlpr) {
                                 $existHlpr->value = $postData['helpers'][$helper->fld_name];
-                                if($existHlpr->validate() && $existHlpr->save()) {
+                                if ($existHlpr->validate() && $existHlpr->save()) {
                                     $helpersCreated++;
                                 }
                             } else {
@@ -522,7 +520,7 @@ class AdsController extends BaseActiveController
                                 $goodsHelpersValue->service_goods_id = $model->serviceGoods[0]->id;
                                 $goodsHelpersValue->helper_id = $helper->id;
                                 $goodsHelpersValue->value = $postData['helpers'][$helper->fld_name];
-                                if($goodsHelpersValue->validate() && $goodsHelpersValue->save()) {
+                                if ($goodsHelpersValue->validate() && $goodsHelpersValue->save()) {
                                     $helpersCreated++;
                                 }
                             }
@@ -536,8 +534,9 @@ class AdsController extends BaseActiveController
                 'message' => 'Ads updated',
                 'ads' => $model->id,
                 'serviceGoods' => $model->serviceGoods[0]->id,
-                'helperCreated' =>  $helpersCreated,
-                'uploadedMedia' =>  $uploadedImages ?? 0,
+                'helperCreated' => $helpersCreated,
+                'uploadedMedia' => $uploadedImages ?? 0,
+                'categoryUpdated' => $serviceGoodsSaved ?? 0,
             ];
 
 
