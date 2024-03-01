@@ -400,7 +400,7 @@ class AdsController extends BaseActiveController
 
             if ($helpers) {
                 foreach ($helpers as $helper) {
-                    if(isset($postData['helpers'][$helper->id])) {
+                    if(isset($postData['helpers'][$helper->fld_name])) {
 
                         $goodsHelpersValue = new GoodsHelpersValue();
                         $goodsHelpersValue->service_goods_id = $serviceGoods->id;
@@ -503,7 +503,7 @@ class AdsController extends BaseActiveController
 
                 if ($helpers) {
                     foreach ($helpers as $helper) {
-                        if(isset($postData['helpers'][$helper->id])) {
+                        if(isset($postData['helpers'][$helper->fld_name])) {
 
                             $existHlpr = GoodsHelpersValue::find()
                                 ->where([
