@@ -322,6 +322,8 @@ class AdsController extends BaseActiveController
             foreach ($models as $model) {
                 $_model = $model->toArray();
                 $_model['media'] = MediaClass::getInstance()->getMediaList($model->id, 'ads');
+                $_model['category'] = $model->serviceGoods[0]->category;
+                $_model['helpers'] = $model->serviceGoods[0]->goodsHelpersValues;
                 $newModels[] = $_model;
             }
         }

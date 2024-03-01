@@ -14,6 +14,7 @@ use app\models\Ads;
 class AdsSearch extends Ads
 {
 
+    public $category;
     public $start_date;
     public $end_date;
     /**
@@ -23,7 +24,7 @@ class AdsSearch extends Ads
     {
         return [
             [['id', 'client_id', 'status_id', 'published'], 'integer'],
-            [['title', 'description', 'expired_date', 'publish_date', 'created_at', 'updated_at', 'expired_at'], 'safe'],
+            [['title', 'description', 'expired_date', 'publish_date', 'created_at', 'updated_at', 'expired_at', 'category'], 'safe'],
             [['start_date','end_date'], 'date', 'format' => 'php:Y-m-d H:i:s']
         ];
     }
