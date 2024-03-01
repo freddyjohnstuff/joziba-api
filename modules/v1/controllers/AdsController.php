@@ -134,7 +134,6 @@ use function PHPUnit\Framework\returnArgument;
  *                     property="publish_date",
  *                     type="date"
  *                 ),
-
  *                 example={
  *                   "published": 0,
  *                   "title": "Ad title",
@@ -303,8 +302,10 @@ class AdsController extends BaseActiveController
     {
         $actions = parent::actions();
         unset($actions['index']);
+        unset($actions['view']);
         unset($actions['create']);
         unset($actions['update']);
+        unset($actions['delete']);
         return $actions;
     }
 
@@ -328,6 +329,24 @@ class AdsController extends BaseActiveController
             }
         }
         return ['models' => $newModels, 'count' => $data->getTotalCount(), 'pages' => $data->pagination->links];
+    }
+
+    public function actionView($id)
+    {
+        $model = Ads::findOne($id);
+        if(!$model)
+        {
+            $this->sendErrorCode(400);
+            return ['message' => 'Entity not found'];
+        }
+
+        $_model = $model->toArray();
+        $_model['media'] = MediaClass::getInstance()->getMediaList($model->id, 'ads');
+        $_model['category'] = $model->serviceGoods[0]->category;
+        $_model['helpers'] = $model->serviceGoods[0]->getGoodsHelpersValuesWithLabels();
+
+
+        return $_model;
     }
 
     public function actionCreate()
@@ -440,7 +459,7 @@ class AdsController extends BaseActiveController
             'category_id',
             'title',
             'description',
-            'expired',
+            'expired_date',
             'helpers',
             'images',
             'helpers'
@@ -460,90 +479,112 @@ class AdsController extends BaseActiveController
 
         /* @var $model Ads */
         $model = Ads::findOne($id);
-        if ($model) {
+        if (!$model) {
+            $this->sendErrorCode(400);
+            return ['message' => 'Entity not found'];
+        }
 
-            if ($model->client_id != $client_id) {
-                $this->sendErrorCode(401);
-                return ['message' => 'Unauthorised access'];
-            }
+        if ($model->client_id != $client_id) {
+            $this->sendErrorCode(400);
+            return ['message' => 'Unauthorised access'];
+        }
 
-            if (isset($postData['expired_date'])) {
-                $updatedDate = new \DateTime($postData['expired_date']);
-                $model->expired_date = $updatedDate->format('Y-m-d H:i:s');
-            }
+        if (isset($postData['expired_date'])) {
+            $updatedDate = new \DateTime($postData['expired_date']);
+            $model->expired_date = $updatedDate->format('Y-m-d H:i:s');
+        }
 
-            if (isset($postData['title'])) {
-                $model->title = $postData['title'];
-            }
-            if (isset($postData['description'])) {
-                $model->description = $postData['description'];
-            }
+        if (isset($postData['title'])) {
+            $model->title = $postData['title'];
+        }
+        if (isset($postData['description'])) {
+            $model->description = $postData['description'];
+        }
 
-            if (isset($postData['category_id'])) {
-                $serviceGoods = ServiceGoods::findOne($model->serviceGoods[0]->id);
-                $serviceGoods->category_id = $postData['category_id'];
-                $serviceGoodsSaved = $serviceGoods->validate() && $serviceGoods->save();
-            }
+        if (isset($postData['category_id'])) {
+            $serviceGoods = ServiceGoods::findOne($model->serviceGoods[0]->id);
+            $serviceGoods->category_id = $postData['category_id'];
+            $serviceGoodsSaved = $serviceGoods->validate() && $serviceGoods->save();
+        }
 
-            if (isset($_FILES['images'])) {
-                $uploadedImages = MediaClass::getInstance()->createMediaList($model->id);
-            }
+        if (isset($_FILES['images'])) {
+            $uploadedImages = MediaClass::getInstance()->createMediaList($model->id);
+        }
 
-            $updatedSystemDate = new \DateTime();
-            $model->updated_at = $updatedSystemDate->format('Y-m-d H:i:s');
+        $updatedSystemDate = new \DateTime();
+        $model->updated_at = $updatedSystemDate->format('Y-m-d H:i:s');
 
-            $helpersCreated = 0;
-            if (!empty($postData['helpers'])) {
+        $helpersCreated = 0;
+        if (!empty($postData['helpers'])) {
 
-                $helpers = GoodsHelpers::find()
-                    ->where(['category_id' => intval($postData['category_id'])])
-                    ->all();
+            $helpers = GoodsHelpers::find()
+                ->where(['category_id' => intval($postData['category_id'])])
+                ->all();
 
-                if ($helpers) {
-                    foreach ($helpers as $helper) {
-                        if (isset($postData['helpers'][$helper->fld_name])) {
+            if ($helpers) {
+                foreach ($helpers as $helper) {
+                    if (isset($postData['helpers'][$helper->fld_name])) {
 
-                            $existHlpr = GoodsHelpersValue::find()
-                                ->where([
-                                    'AND',
-                                    ['service_goods_id' => $model->serviceGoods[0]->id],
-                                    ['helper_id' => $helper->id]
-                                ])
-                                ->one();
-                            if ($existHlpr) {
-                                $existHlpr->value = $postData['helpers'][$helper->fld_name];
-                                if ($existHlpr->validate() && $existHlpr->save()) {
-                                    $helpersCreated++;
-                                }
-                            } else {
-                                $goodsHelpersValue = new GoodsHelpersValue();
-                                $goodsHelpersValue->service_goods_id = $model->serviceGoods[0]->id;
-                                $goodsHelpersValue->helper_id = $helper->id;
-                                $goodsHelpersValue->value = $postData['helpers'][$helper->fld_name];
-                                if ($goodsHelpersValue->validate() && $goodsHelpersValue->save()) {
-                                    $helpersCreated++;
-                                }
+                        $existHlpr = GoodsHelpersValue::find()
+                            ->where([
+                                'AND',
+                                ['service_goods_id' => $model->serviceGoods[0]->id],
+                                ['helper_id' => $helper->id]
+                            ])
+                            ->one();
+                        if ($existHlpr) {
+                            $existHlpr->value = $postData['helpers'][$helper->fld_name];
+                            if ($existHlpr->validate() && $existHlpr->save()) {
+                                $helpersCreated++;
+                            }
+                        } else {
+                            $goodsHelpersValue = new GoodsHelpersValue();
+                            $goodsHelpersValue->service_goods_id = $model->serviceGoods[0]->id;
+                            $goodsHelpersValue->helper_id = $helper->id;
+                            $goodsHelpersValue->value = $postData['helpers'][$helper->fld_name];
+                            if ($goodsHelpersValue->validate() && $goodsHelpersValue->save()) {
+                                $helpersCreated++;
                             }
                         }
                     }
                 }
             }
-
-
-            return [
-                'message' => 'Ads updated',
-                'ads' => $model->id,
-                'serviceGoods' => $model->serviceGoods[0]->id,
-                'helperCreated' => $helpersCreated,
-                'uploadedMedia' => $uploadedImages ?? 0,
-                'categoryUpdated' => $serviceGoodsSaved ?? 0,
-            ];
-
-
-        } else {
-            $this->sendErrorCode(404);
-            return ['message' => 'Entity not found'];
         }
+
+
+        return [
+            'message' => 'Ads updated',
+            'ads' => $model->id,
+            'serviceGoods' => $model->serviceGoods[0]->id,
+            'helperCreated' => $helpersCreated,
+            'uploadedMedia' => $uploadedImages ?? 0,
+            'categoryUpdated' => $serviceGoodsSaved ?? 0,
+        ];
     }
 
+
+    public function deleteAction($id)
+    {
+        $ads = Ads::findOne($id);
+        if(!$ads) {
+            $this->sendErrorCode(400);
+            return ['message' => 'Entity not found'];
+        }
+
+        $client_id = ClientTools::getInstance()->getCurrentClientId();
+        if($ads->client_id != $client_id) {
+            $this->sendErrorCode(400);
+            return ['message' => 'Unauthorised access'];
+        }
+
+        $ads->status_id = 6;
+        if(!$ads->save()) {
+            $this->sendErrorCode(400);
+            return [
+                'message' => 'Something went wrong',
+                'errors' => $ads->getErrors(),
+            ];
+        }
+        return ['message' => 'Ads removed successful!'];
+    }
 }
