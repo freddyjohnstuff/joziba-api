@@ -187,4 +187,50 @@ class AdsStatusController extends BaseActiveController
         ];
         return $behaviors;
     }
+
+
+    public function actions()
+    {
+        $actions = parent::actions();
+        unset($actions['create']);
+        return $actions;
+    }
+
+
+    public function actionCreate()
+    {
+        $postData = \Yii::$app->request->post();
+        if(
+            isset($postData['id']) &&
+            isset($postData['status']) &&
+            in_array($postData['status'], ['draft', 'published'])
+        ) {
+            $change = [
+                'draft' => 1,
+                'published' => 2,
+            ];
+
+            $model = Ads::findOne($postData['id']);
+            if(!$model) {
+                $this->sendErrorCode(400);
+                return ['message' => 'Entity not found!'];
+            }
+
+            $model->status_id = $change[$postData['status']];
+
+            if($model->save()) {
+               return ['message' => 'Status updated'];
+            } else {
+                $this->sendErrorCode(400);
+                return [
+                    'message' => 'Something went wrong!',
+                    'errors' => $model->getErrors()
+                ];
+            }
+        }
+
+        $this->sendErrorCode(400);
+        return ['message' => 'Something went wrong!'];
+    }
+
 }
