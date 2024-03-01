@@ -81,4 +81,21 @@ class ServiceGoods extends \yii\db\ActiveRecord
     {
         return $this->hasMany(GoodsHelpersValue::class, ['service_goods_id' => 'id']);
     }
+
+
+    public function getGoodsHelpersValuesWithLabels() {
+
+        $list = $this->getGoodsHelpersValues()->all();
+        $_list = [];
+        foreach ($list as $item) {
+            $_item = $item->toArray();
+            $_item['helper_name'] = $item->helper;
+            $_list[] = $_item;
+        }
+
+        return $_list;
+    }
+
+
+
 }
