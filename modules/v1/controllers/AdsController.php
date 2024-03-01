@@ -405,7 +405,7 @@ class AdsController extends BaseActiveController
                         $goodsHelpersValue = new GoodsHelpersValue();
                         $goodsHelpersValue->service_goods_id = $serviceGoods->id;
                         $goodsHelpersValue->helper_id = $helper->id;
-                        $goodsHelpersValue->value = $postData['helpers'][$helper->id];
+                        $goodsHelpersValue->value = $postData['helpers'][$helper->fld_name];
                         if($goodsHelpersValue->validate() && $goodsHelpersValue->save()) {
                             $helpersCreated++;
                         }
@@ -513,7 +513,7 @@ class AdsController extends BaseActiveController
                                 ])
                                 ->one();
                             if($existHlpr) {
-                                $existHlpr->value = $postData['helpers'][$helper->id];
+                                $existHlpr->value = $postData['helpers'][$helper->fld_name];
                                 if($existHlpr->validate() && $existHlpr->save()) {
                                     $helpersCreated++;
                                 }
@@ -521,7 +521,7 @@ class AdsController extends BaseActiveController
                                 $goodsHelpersValue = new GoodsHelpersValue();
                                 $goodsHelpersValue->service_goods_id = $model->serviceGoods[0]->id;
                                 $goodsHelpersValue->helper_id = $helper->id;
-                                $goodsHelpersValue->value = $postData['helpers'][$helper->id];
+                                $goodsHelpersValue->value = $postData['helpers'][$helper->fld_name];
                                 if($goodsHelpersValue->validate() && $goodsHelpersValue->save()) {
                                     $helpersCreated++;
                                 }
