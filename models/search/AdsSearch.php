@@ -61,7 +61,7 @@ class AdsSearch extends Ads
             ],
         ]);
 
-        $this->load($params, 'filters');
+        $this->load(['filters' => $params], 'filters');
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -81,7 +81,7 @@ class AdsSearch extends Ads
             ],
         ]);
 
-        if(isset($params['filters']['client_id']) && !empty($params['filters']['client_id'])) {
+        if(isset($params['client_id']) && !empty($params['client_id'])) {
             $query
                 ->andFilterWhere(['in', Ads::tableName().'.client_id', $this->client_id])
                 ->andFilterWhere(['in', Ads::tableName().'.status_id', [1,2,3,4,5]]);
@@ -99,12 +99,12 @@ class AdsSearch extends Ads
             Ads::tableName().'.id' => $this->id,
         ]);
 
-
+        $title = $this->title;
         $query->andFilterWhere(['like', Ads::tableName().'.title', $this->title])
             ->andFilterWhere(['like', Ads::tableName().'.description', $this->description]);
 
-        if (isset($params['filters']['category_id'])) {
-            $query->andFilterWhere(['in', ServiceGoods::tableName() . '.category_id', $params['filters']['category_id']]);
+        if (isset($params['category_id'])) {
+            $query->andFilterWhere(['in', ServiceGoods::tableName() . '.category_id', $params['category_id']]);
         }
 
         return $dataProvider;

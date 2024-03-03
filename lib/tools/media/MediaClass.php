@@ -81,6 +81,7 @@ final class MediaClass
                 $media->target_entity = $target;
                 $media->target_id = $id;
                 $media->client_id = ClientTools::getInstance()->getCurrentClientId();
+                $media->file_name = $file['name'];
                 $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
                 $name = md5($target . $id . date('Ymdhis') . time()) . '.' . $ext;
 

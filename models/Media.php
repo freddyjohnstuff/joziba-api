@@ -14,6 +14,7 @@ use Yii;
  * @property string|null $media_path
  * @property string|null $created_at
  * @property int $client_id
+ * @property string|null $file_name
  */
 class Media extends \yii\db\ActiveRecord
 {
@@ -34,7 +35,7 @@ class Media extends \yii\db\ActiveRecord
             [['target_id', 'client_id'], 'integer'],
             [['created_at'], 'safe'],
             [['client_id'], 'required'],
-            [['target_entity', 'media_url', 'media_path'], 'string', 'max' => 255],
+            [['target_entity', 'media_url', 'media_path', 'file_name'], 'string', 'max' => 255],
         ];
     }
 
@@ -51,6 +52,7 @@ class Media extends \yii\db\ActiveRecord
             'media_path' => Yii::t('app', 'Media Path'),
             'created_at' => Yii::t('app', 'Created At'),
             'client_id' => Yii::t('app', 'Client ID'),
+            'file_name' => Yii::t('app', 'File Name'),
         ];
     }
 }

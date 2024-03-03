@@ -103,6 +103,7 @@ class MediaController extends BaseActiveController
                     $media = new Media();
                     $media->target_entity = $target;
                     $media->target_id = $post['target_id'];
+                    $media->file_name = $file['name'];
                     $media->client_id = $client_id;
                     $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 
