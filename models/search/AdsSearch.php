@@ -99,7 +99,6 @@ class AdsSearch extends Ads
             Ads::tableName().'.id' => $this->id,
         ]);
 
-        $title = $this->title;
         $query->andFilterWhere(['like', Ads::tableName().'.title', $this->title])
             ->andFilterWhere(['like', Ads::tableName().'.description', $this->description]);
 
