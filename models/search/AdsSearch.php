@@ -23,7 +23,7 @@ class AdsSearch extends Ads
     public function rules()
     {
         return [
-            [['id', 'client_id', 'status_id', 'published'], 'integer'],
+            [['id', 'client_id', 'status_id', 'published', 'city_id'], 'integer'],
             [['title', 'description', 'expired_date', 'publish_date', 'created_at', 'updated_at', 'expired_at', 'category'], 'safe'],
             [['start_date','end_date'], 'date', 'format' => 'php:Y-m-d H:i:s']
         ];
@@ -91,6 +91,7 @@ class AdsSearch extends Ads
 
         // grid filtering conditions
         $query
+            ->andFilterWhere(['=', Ads::tableName().'.city_id', $this->city_id])
             ->andFilterWhere(['=', Ads::tableName().'.published', $this->published])
             ->andFilterWhere(['>=', Ads::tableName().'.publish_date', $this->start_date])
             ->andFilterWhere(['<=', Ads::tableName().'.publish_date', $this->end_date]);

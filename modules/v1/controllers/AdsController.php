@@ -313,7 +313,7 @@ class AdsController extends BaseActiveController
     {
         $searchModel = new AdsSearch();
         $params = \Yii::$app->request->queryParams;
-        unset($params['filters']['client_id']);
+        unset($params['client_id']);
         if (!empty($params) && array_key_exists('private-view', $params)) {
 
             $client_id = ClientTools::getInstance()->getCurrentClientId();
@@ -321,18 +321,63 @@ class AdsController extends BaseActiveController
                 $this->sendErrorCode(400);
                 return ['message' => 'Unauthorised access'];
             }
-            $params['filters']['client_id'] = $client_id;
+            $params['client_id'] = $client_id;
         }
         $data = $searchModel->search($params);
         $models = $data->getModels();
         $newModels = [];
         if (!empty($models)) {
             foreach ($models as $model) {
-                $_model = $model->toArray();
-                $_model['media'] = MediaClass::getInstance()->getMediaList($model->id, 'ads');
-                $_model['category'] = (!empty($model->serviceGoods)) ? $model->serviceGoods[0]->category : null;
-                $_model['helpers'] = (!empty($model->serviceGoods)) ? $model->serviceGoods[0]->getGoodsHelpersValuesWithLabels() : null;
-                $newModels[] = $_model;
+
+
+                $hasHelper = false;
+                $allowedHelper = false;
+                if (isset($params['helpers'])) {
+                    $hasHelper = true;
+
+                    if (!empty($model->serviceGoods)) {
+                        $helpers = GoodsHelpers::find()->where(['category_id' => $model->serviceGoods[0]->category_id]);
+                    } else {
+                        $helpers = GoodsHelpers::find();
+                    }
+
+                    $helpers = $helpers->all();
+                    if ($helpers) {
+                        /** @var GoodsHelpers $helper */
+                        foreach ($helpers as $helper) {
+                            if(isset($params['helpers'][$helper->fld_name]))
+                            {
+                                $value = GoodsHelpersValue::find()
+                                    ->where(
+                                        [
+                                            'AND',
+                                            ['service_goods_id' => $model->serviceGoods[0]->id],
+                                            ['helper_id' => $helper->id]
+                                        ]
+                                    )
+                                    ->one();
+
+                                if($value) {
+                                    if($value->value == $params['helpers'][$helper->fld_name]) {
+                                        $allowedHelper = true;
+                                    }
+                                }
+
+                            }
+
+                        }
+                    }
+
+                }
+
+                if(!$hasHelper || ($hasHelper && $allowedHelper)) {
+                    $_model = $model->toArray();
+                    $_model['media'] = MediaClass::getInstance()->getMediaList($model->id, 'ads');
+                    $_model['category'] = (!empty($model->serviceGoods)) ? $model->serviceGoods[0]->category : null;
+                    $_model['helpers'] = (!empty($model->serviceGoods)) ? $model->serviceGoods[0]->getGoodsHelpersValuesWithLabels() : null;
+                    $_model['city'] = (!empty($model->city)) ? $model->city->toArray() : null;
+                    $newModels[] = $_model;
+                }
             }
         }
         return ['models' => $newModels, 'count' => $data->getTotalCount(), 'pages' => $data->pagination->links];
@@ -353,6 +398,8 @@ class AdsController extends BaseActiveController
         $_model['media'] = MediaClass::getInstance()->getMediaList($model->id, 'ads');
         $_model['category'] = (!empty($model->serviceGoods)) ? $model->serviceGoods[0]->category : null;
         $_model['helpers'] = (!empty($model->serviceGoods)) ? $model->serviceGoods[0]->getGoodsHelpersValuesWithLabels() : null;
+        $_model['city'] = (!empty($model->city)) ? $model->city->toArray() : null;
+
         return $_model;
     }
 
@@ -364,6 +411,7 @@ class AdsController extends BaseActiveController
         $postData = \Yii::$app->request->post();
 
         if (!(
+            isset($postData['city_id']) &&
             isset($postData['category_id']) &&
             isset($postData['title']) &&
             isset($postData['description']) &&
@@ -387,6 +435,7 @@ class AdsController extends BaseActiveController
                 'ads' => [
                     'client_id' => $client_id,
                     'status_id' => 1 /* Embriyo */,
+                    'city_id' => $postData['city_id'],
                     'title' => $postData['title'],
                     'description' => $postData['description'],
                     'expired_date' => $expiredDate->format("Y-m-d H:i:s"),
@@ -464,12 +513,12 @@ class AdsController extends BaseActiveController
         $client_id = ClientTools::getInstance()->getCurrentClientId();
         $fields = [
             'category_id',
+            'city_id',
             'title',
             'description',
             'expired_date',
             'helpers',
             'images',
-            'helpers'
         ];
 
         $paramsCount = 0;
@@ -506,6 +555,10 @@ class AdsController extends BaseActiveController
         }
         if (isset($postData['description'])) {
             $model->description = $postData['description'];
+        }
+
+        if (isset($postData['city_id'])) {
+            $model->city_id = $postData['city_id'];
         }
 
         if (isset($postData['category_id'])) {

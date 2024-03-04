@@ -18,7 +18,9 @@ use Yii;
  * @property string|null $created_at
  * @property string|null $updated_at
  * @property string|null $expired_at
+ * @property int $city_id
  *
+ * @property TajCities $city
  * @property Clients $client
  * @property ServiceGoods[] $serviceGoods
  * @property AdsStatus $status
@@ -40,10 +42,11 @@ class Ads extends \yii\db\ActiveRecord
     {
         return [
             [['client_id', 'status_id', 'title'], 'required'],
-            [['client_id', 'status_id', 'published'], 'integer'],
+            [['client_id', 'status_id', 'published', 'city_id'], 'integer'],
             [['description'], 'string'],
             [['expired_date', 'publish_date', 'created_at', 'updated_at', 'expired_at'], 'safe'],
             [['title'], 'string', 'max' => 255],
+            [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => TajCities::class, 'targetAttribute' => ['city_id' => 'id']],
             [['client_id'], 'exist', 'skipOnError' => true, 'targetClass' => Clients::class, 'targetAttribute' => ['client_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => AdsStatus::class, 'targetAttribute' => ['status_id' => 'id']],
         ];
@@ -66,7 +69,18 @@ class Ads extends \yii\db\ActiveRecord
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
             'expired_at' => Yii::t('app', 'Expired At'),
+            'city_id' => Yii::t('app', 'City ID'),
         ];
+    }
+
+    /**
+     * Gets query for [[City]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCity()
+    {
+        return $this->hasOne(TajCities::class, ['id' => 'city_id']);
     }
 
     /**
